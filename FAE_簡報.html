@@ -6,876 +6,823 @@
     <title>FAE 客服知識庫簡報 - Wolves Digital</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <style>
-        :root {
-            --primary: #FF6B35;
-            --primary-light: rgba(255, 107, 53, 0.15);
-            --primary-dim: rgba(255, 107, 53, 0.08);
-            --bg-dark: #1a1a2e;
-            --bg-card: rgba(30, 40, 60, 0.85);
-            --text: #e8e8e8;
-            --text-dim: #aaa;
-            --border: rgba(255, 107, 53, 0.2);
-            --success: #00D99F;
-            --warning: #FFB300;
-            --danger: #ff4444;
-            --info: #00B4D8;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: system-ui, 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: var(--text);
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        /* Navigation */
-        .nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(26, 26, 46, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid var(--primary);
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            height: 56px;
-        }
-
-        .nav-brand {
-            font-weight: 700;
-            font-size: 1.1em;
-            color: var(--primary);
-            margin-right: 30px;
-            white-space: nowrap;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 4px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .nav-links::-webkit-scrollbar { display: none; }
-
-        .nav-link {
-            padding: 8px 16px;
-            color: var(--text-dim);
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.9em;
-            white-space: nowrap;
-            transition: all 0.2s;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            color: #fff;
-            background: var(--primary-light);
-        }
-
-        /* Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 76px 24px 40px;
-        }
-
-        /* Cover */
-        .cover {
-            text-align: center;
-            padding: 60px 20px;
-            margin-bottom: 40px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-        }
-
-        .cover h1 {
-            font-size: 2.8em;
-            color: #fff;
-            margin-bottom: 12px;
-            text-shadow: 0 2px 20px rgba(255, 107, 53, 0.3);
-        }
-
-        .cover .subtitle {
-            font-size: 1.3em;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        .cover .meta {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            color: var(--text-dim);
-            font-size: 0.95em;
-        }
-
-        .cover .meta span { color: var(--primary); font-weight: 600; }
-
-        /* Sections */
-        .section {
-            margin-bottom: 40px;
-            scroll-margin-top: 70px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.6em;
-            color: #fff;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .section-title .num {
-            background: var(--primary);
-            color: var(--bg-dark);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7em;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        /* Cards */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 24px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.15);
-        }
-
-        .card h3 {
-            color: var(--primary);
-            margin-bottom: 12px;
-            font-size: 1.15em;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .stat-card .label {
-            color: var(--text-dim);
-            font-size: 0.85em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-        }
-
-        .stat-card .number {
-            font-size: 2.4em;
-            font-weight: 700;
-            color: var(--primary);
-            line-height: 1.1;
-        }
-
-        .stat-card .detail {
-            color: var(--text-dim);
-            font-size: 0.85em;
-            margin-top: 4px;
-        }
-
-        /* Chart Layout */
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-
-        .chart-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 20px;
-            position: relative;
-        }
-
-        .chart-box h3 {
-            color: #fff;
-            margin-bottom: 12px;
-            font-size: 1.05em;
-        }
-
-        .chart-wrap { position: relative; height: 350px; }
-        .chart-wrap-sm { position: relative; height: 300px; }
-        .chart-wrap-lg { position: relative; height: 450px; }
-
-        /* Top 10 */
-        .top-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .issue-list { list-style: none; }
-
-        .issue-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            margin-bottom: 6px;
-            background: var(--primary-dim);
-            border-left: 3px solid var(--primary);
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .issue-item:hover {
-            background: var(--primary-light);
-            transform: translateX(4px);
-        }
-
-        .issue-rank {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 1.1em;
-            min-width: 28px;
-        }
-
-        .issue-name { flex: 1; color: #ddd; font-size: 0.95em; }
-
-        .issue-count {
-            background: var(--primary);
-            color: var(--bg-dark);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85em;
-        }
-
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; }
-        thead { background: var(--primary-light); }
-        th {
-            padding: 14px 16px;
-            text-align: left;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 0.85em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--primary);
-        }
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            color: #ddd;
-            font-size: 0.93em;
-        }
-        tbody tr:hover { background: var(--primary-dim); }
-
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 0.82em;
-        }
-        .badge-danger { background: var(--danger); color: #fff; }
-        .badge-warning { background: var(--warning); color: #000; }
-        .badge-info { background: var(--info); color: #fff; }
-        .badge-success { background: var(--success); color: #000; }
-        .badge-primary { background: var(--primary); color: var(--bg-dark); }
-
-        /* Template Cards */
-        .template-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-        }
-
-        .template-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .template-header {
-            background: var(--primary-light);
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .template-num {
-            background: var(--primary);
-            color: var(--bg-dark);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.9em;
-            flex-shrink: 0;
-        }
-
-        .template-title {
-            color: #fff;
-            font-weight: 600;
-            font-size: 1.05em;
-        }
-
-        .template-body { padding: 20px; }
-
-        .template-section {
-            margin-bottom: 14px;
-        }
-
-        .template-section:last-child { margin-bottom: 0; }
-
-        .template-label {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 0.85em;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
-        }
-
-        .template-content {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            padding: 12px 16px;
-            font-size: 0.92em;
-            line-height: 1.7;
-            color: #ccc;
-            border-left: 3px solid var(--primary);
-        }
-
-        .template-warning {
-            background: rgba(255, 68, 68, 0.1);
-            border: 1px solid rgba(255, 68, 68, 0.3);
-            border-radius: 6px;
-            padding: 10px 14px;
-            font-size: 0.88em;
-            color: #ff8888;
-        }
-
-        /* FAQ Section */
-        .faq-category {
-            margin-bottom: 24px;
-        }
-
-        .faq-category-title {
-            color: var(--primary);
-            font-size: 1.2em;
-            margin-bottom: 12px;
-            padding: 8px 16px;
-            background: var(--primary-dim);
-            border-radius: 6px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .faq-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            overflow: hidden;
-        }
-
-        .faq-q {
-            padding: 14px 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: background 0.2s;
-            user-select: none;
-        }
-
-        .faq-q:hover { background: var(--primary-dim); }
-
-        .faq-q .arrow {
-            color: var(--primary);
-            transition: transform 0.3s;
-            font-size: 0.8em;
-        }
-
-        .faq-q.open .arrow { transform: rotate(90deg); }
-
-        .faq-q .q-text { font-weight: 600; color: #fff; flex: 1; }
-
-        .faq-a {
-            display: none;
-            padding: 0 18px 16px;
-            color: #ccc;
-            font-size: 0.93em;
-            line-height: 1.7;
-            border-top: 1px solid var(--border);
-        }
-
-        .faq-a.show { display: block; padding-top: 14px; }
-
-        .faq-a ol, .faq-a ul {
-            margin-left: 20px;
-            margin-top: 6px;
-        }
-
-        .faq-a li { margin-bottom: 4px; }
-
-        /* Key Rules Box */
-        .rules-box {
-            background: rgba(255, 68, 68, 0.08);
-            border: 1px solid rgba(255, 68, 68, 0.3);
-            border-radius: 10px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .rules-box h3 {
-            color: var(--danger);
-            margin-bottom: 14px;
-            font-size: 1.15em;
-        }
-
-        .rules-box ol {
-            margin-left: 20px;
-            color: #ddd;
-        }
-
-        .rules-box li {
-            margin-bottom: 8px;
-            line-height: 1.6;
-        }
-
-        .rules-box strong { color: #ff8888; }
-
-        /* Escalation Flow */
-        .flow-steps {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .flow-step {
-            background: var(--primary-light);
-            border: 1px solid var(--primary);
-            border-radius: 8px;
-            padding: 12px 20px;
-            text-align: center;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .flow-arrow {
-            color: var(--primary);
-            font-size: 1.5em;
-            padding: 0 8px;
-        }
-
-        /* Print Styles */
-        @media print {
-            body { background: #fff; color: #000; }
-            .nav { display: none; }
-            .container { padding-top: 20px; }
-            .card, .stat-card, .chart-box, .section, .template-card, .faq-item {
-                break-inside: avoid;
-                border-color: #ddd;
-                background: #fff;
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .chart-grid, .top-grid, .template-grid { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .cover h1 { font-size: 2em; }
-            .nav-brand { font-size: 0.95em; margin-right: 16px; }
-        }
-
-        @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .flow-steps { flex-direction: column; }
-            .flow-arrow { transform: rotate(90deg); padding: 4px 0; }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(255, 107, 53, 0.05); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
-
-        footer {
-            text-align: center;
-            padding: 24px;
-            color: #666;
-            border-top: 1px solid var(--border);
-            margin-top: 40px;
-            font-size: 0.88em;
-        }
-    </style>
+:root {
+    --primary: #FF6B35;
+    --primary-light: rgba(255, 107, 53, 0.15);
+    --primary-dim: rgba(255, 107, 53, 0.08);
+    --bg-dark: #1a1a2e;
+    --bg-card: rgba(30, 40, 60, 0.85);
+    --text: #e8e8e8;
+    --text-dim: #aaa;
+    --border: rgba(255, 107, 53, 0.2);
+    --success: #00D99F;
+    --warning: #FFB300;
+    --danger: #ff4444;
+    --info: #00B4D8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: system-ui, 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* Navigation */
+.nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid var(--primary);
+    padding: 0 20px;
+    display: flex; align-items: center; height: 56px;
+}
+.nav-brand { font-weight: 700; font-size: 1.1em; color: var(--primary); margin-right: 30px; white-space: nowrap; }
+.nav-links { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.nav-links::-webkit-scrollbar { display: none; }
+.nav-link {
+    padding: 8px 16px; color: var(--text-dim); text-decoration: none;
+    border-radius: 6px; font-size: 0.9em; white-space: nowrap; transition: all 0.2s;
+}
+.nav-link:hover, .nav-link.active { color: #fff; background: var(--primary-light); }
+.nav-link.pl-line { border-left: 3px solid #00B4D8; }
+.nav-link.pl-credit { border-left: 3px solid #00D99F; }
+.nav-link.pl-vendor { border-left: 3px solid #9D4EDD; }
+.nav-link.pl-outsource { border-left: 3px solid #FB5607; }
+
+/* Container */
+.container { max-width: 1400px; margin: 0 auto; padding: 76px 24px 40px; }
+
+/* Cover */
+.cover { text-align: center; padding: 60px 20px; margin-bottom: 40px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
+.cover h1 { font-size: 2.8em; color: #fff; margin-bottom: 12px; text-shadow: 0 2px 20px rgba(255, 107, 53, 0.3); }
+.cover .subtitle { font-size: 1.3em; color: var(--primary); margin-bottom: 20px; }
+.cover .meta { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; color: var(--text-dim); font-size: 0.95em; }
+.cover .meta span { color: var(--primary); font-weight: 600; }
+
+/* Sections */
+.section { margin-bottom: 40px; scroll-margin-top: 70px; }
+.section-title {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 1.6em; color: #fff;
+    margin-bottom: 20px; padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary);
+}
+.section-title .num {
+    background: var(--primary); color: var(--bg-dark);
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7em; font-weight: 700; flex-shrink: 0;
+}
+
+/* PL colored section titles */
+.section-title.pl-line { border-bottom-color: #00B4D8; }
+.section-title.pl-line .num { background: #00B4D8; }
+.section-title.pl-credit { border-bottom-color: #00D99F; }
+.section-title.pl-credit .num { background: #00D99F; }
+.section-title.pl-vendor { border-bottom-color: #9D4EDD; }
+.section-title.pl-vendor .num { background: #9D4EDD; }
+.section-title.pl-outsource { border-bottom-color: #FB5607; }
+.section-title.pl-outsource .num { background: #FB5607; }
+
+/* Cards */
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 24px; backdrop-filter: blur(10px); transition: all 0.3s; }
+.card:hover { border-color: var(--primary); box-shadow: 0 8px 30px rgba(255, 107, 53, 0.15); }
+.card h3 { color: var(--primary); margin-bottom: 12px; font-size: 1.15em; }
+
+/* Stats Grid */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: center; }
+.stat-card .label { color: var(--text-dim); font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.stat-card .number { font-size: 2.2em; font-weight: 700; color: var(--primary); line-height: 1.1; }
+.stat-card .detail { color: var(--text-dim); font-size: 0.85em; margin-top: 4px; }
+
+/* Chart Layout */
+.chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; margin-bottom: 24px; }
+.chart-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; position: relative; }
+.chart-box h3 { color: #fff; margin-bottom: 12px; font-size: 1.05em; }
+.chart-wrap { position: relative; height: 350px; }
+.chart-wrap-sm { position: relative; height: 300px; }
+.chart-wrap-lg { position: relative; height: 450px; }
+
+/* Top items */
+.issue-list { list-style: none; }
+.issue-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin-bottom: 6px; background: var(--primary-dim); border-left: 3px solid var(--primary); border-radius: 6px; transition: all 0.2s; }
+.issue-item:hover { background: var(--primary-light); transform: translateX(4px); }
+.issue-rank { font-weight: 700; color: var(--primary); font-size: 1.1em; min-width: 28px; }
+.issue-name { flex: 1; color: #ddd; font-size: 0.95em; }
+.issue-count { background: var(--primary); color: var(--bg-dark); padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 0.85em; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--primary-light); }
+th { padding: 14px 16px; text-align: left; color: var(--primary); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--primary); }
+td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: #ddd; font-size: 0.93em; }
+tbody tr:hover { background: var(--primary-dim); }
+
+/* Badges */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-weight: 600; font-size: 0.82em; }
+.badge-danger { background: var(--danger); color: #fff; }
+.badge-warning { background: var(--warning); color: #000; }
+.badge-info { background: var(--info); color: #fff; }
+.badge-success { background: var(--success); color: #000; }
+.badge-primary { background: var(--primary); color: var(--bg-dark); }
+
+/* Template Cards */
+.template-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+.template-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.template-header { background: var(--primary-light); padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+.template-num { background: var(--primary); color: var(--bg-dark); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9em; flex-shrink: 0; }
+.template-title { color: #fff; font-weight: 600; font-size: 1.05em; }
+.template-body { padding: 20px; }
+.template-section { margin-bottom: 14px; }
+.template-section:last-child { margin-bottom: 0; }
+.template-label { color: var(--primary); font-weight: 600; font-size: 0.85em; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+.template-content { background: rgba(0, 0, 0, 0.2); border-radius: 6px; padding: 12px 16px; font-size: 0.92em; line-height: 1.7; color: #ccc; border-left: 3px solid var(--primary); }
+.template-warning { background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); border-radius: 6px; padding: 10px 14px; font-size: 0.88em; color: #ff8888; }
+
+/* FAQ Section */
+.faq-category { margin-bottom: 24px; }
+.faq-category-title { color: var(--primary); font-size: 1.2em; margin-bottom: 12px; padding: 8px 16px; background: var(--primary-dim); border-radius: 6px; border-left: 4px solid var(--primary); }
+.faq-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+.faq-q { padding: 14px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; user-select: none; }
+.faq-q:hover { background: var(--primary-dim); }
+.faq-q .arrow { color: var(--primary); transition: transform 0.3s; font-size: 0.8em; }
+.faq-q.open .arrow { transform: rotate(90deg); }
+.faq-q .q-text { font-weight: 600; color: #fff; flex: 1; }
+.faq-a { display: none; padding: 0 18px 16px; color: #ccc; font-size: 0.93em; line-height: 1.7; border-top: 1px solid var(--border); }
+.faq-a.show { display: block; padding-top: 14px; }
+.faq-a ol, .faq-a ul { margin-left: 20px; margin-top: 6px; }
+.faq-a li { margin-bottom: 4px; }
+
+/* Key Rules Box */
+.rules-box { background: rgba(255, 68, 68, 0.08); border: 1px solid rgba(255, 68, 68, 0.3); border-radius: 10px; padding: 24px; margin-bottom: 24px; }
+.rules-box h3 { color: var(--danger); margin-bottom: 14px; font-size: 1.15em; }
+.rules-box ol { margin-left: 20px; color: #ddd; }
+.rules-box li { margin-bottom: 8px; line-height: 1.6; }
+.rules-box strong { color: #ff8888; }
+
+/* Escalation Flow */
+.flow-steps { display: flex; align-items: center; gap: 0; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
+.flow-step { background: var(--primary-light); border: 1px solid var(--primary); border-radius: 8px; padding: 14px 18px; text-align: center; font-size: 0.95em; font-weight: 600; }
+.flow-arrow { font-size: 1.5em; color: var(--primary); padding: 0 6px; }
+
+/* Product-line comparison cards */
+.pl-comparison-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.pl-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; border-top: 4px solid var(--primary); }
+.pl-card h4 { font-size: 1.15em; margin-bottom: 12px; }
+.pl-card .pl-stat { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.93em; }
+.pl-card .pl-stat:last-child { border-bottom: none; }
+.pl-card .pl-stat .val { font-weight: 700; }
+
+/* Section divider */
+.section-divider { border: none; border-top: 1px solid var(--border); margin: 50px 0 40px; }
+
+footer { text-align: center; padding: 30px; color: var(--text-dim); font-size: 0.85em; border-top: 1px solid var(--border); margin-top: 40px; }
+
+@media (max-width: 768px) {
+    .chart-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .template-grid { grid-template-columns: 1fr; }
+    .pl-comparison-grid { grid-template-columns: 1fr; }
+    .cover h1 { font-size: 1.8em; }
+}
+</style>
 </head>
 <body>
 
-<!-- Navigation -->
 <nav class="nav">
-    <div class="nav-brand">Wolves Digital FAE</div>
+    <span class="nav-brand">🐺 Wolves FAE</span>
     <div class="nav-links">
         <a href="#cover" class="nav-link active">首頁</a>
-        <a href="#overview" class="nav-link">總覽</a>
-        <a href="#category" class="nav-link">分類分析</a>
-        <a href="#trend" class="nav-link">趨勢</a>
-        <a href="#station" class="nav-link">站點排行</a>
-        <a href="#top10" class="nav-link">Top 10</a>
-        <a href="#severity" class="nav-link">嚴重度</a>
-        <a href="#rules" class="nav-link">鐵律</a>
-        <a href="#templates" class="nav-link">回覆範本</a>
-        <a href="#faq" class="nav-link">FAQ</a>
-        <a href="#escalation" class="nav-link">升級流程</a>
+        <a href="#overview" class="nav-link">📊 總覽</a>
+        <a href="#line" class="nav-link pl-line">💬 LINE站</a>
+        <a href="#credit" class="nav-link pl-credit">💳 信用版</a>
+        <a href="#vendor" class="nav-link pl-vendor">🎮 遊戲商</a>
+        <a href="#outsource" class="nav-link pl-outsource">🌐 外包</a>
+        <a href="#compare" class="nav-link">📈 對比</a>
+        <a href="#rules" class="nav-link">⚠️ 鐵律</a>
+        <a href="#templates" class="nav-link">📋 範本</a>
+        <a href="#faq" class="nav-link">❓ FAQ</a>
+        <a href="#escalation" class="nav-link">🔺 升級</a>
     </div>
 </nav>
 
 <div class="container">
 
-    <!-- Cover -->
     <section id="cover" class="cover section">
-        <h1>客服知識庫分析簡報</h1>
-        <div class="subtitle">FAE 技術客服團隊專用查閱手冊（含 LINE 站 + 信用版 + 遊戲商 + 外包）</div>
+        <h1>FAE 客服知識庫簡報</h1>
+        <div class="subtitle">多維度客訴分析 — LINE站 / 信用版 / 遊戲商 / 外包</div>
         <div class="meta">
-            <div>資料週期: <span>2026-01-01 ~ 2026-04-13</span></div>
-            <div>涵蓋站點: <span>24 個 TG 群組</span></div>
-            <div>總訊息數: <span>32,293 則</span></div>
-            <div>報告日期: <span>2026-04-13</span></div>
+            <div>📊 資料筆數：<span>32,293</span></div>
+            <div>🔥 客訴數：<span>6,562</span></div>
+            <div>📅 資料截至：<span>2026-04-13</span></div>
+            <div>🏢 產品線：<span>4 大板塊 / 24 站點</span></div>
         </div>
     </section>
 
-    <!-- ==================== PART 1: 客訴分析報告 ==================== -->
+    <hr class="section-divider">
 
-    <!-- Overview Stats -->
+
     <section id="overview" class="section">
-        <div class="section-title"><span class="num">1</span> 客訴分析報告 — 整體統計</div>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="label">總訊息數</div>
-                <div class="number">32,293</div>
-                <div class="detail">整個分析週期（含遊戲商/外包）</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">有效訊息</div>
-                <div class="number">28,099</div>
-                <div class="detail">佔總訊息 87.0%</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">有效客訴</div>
-                <div class="number">6,562</div>
-                <div class="detail">佔有效訊息 23.4%</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">雜訊比例</div>
-                <div class="number">13.0%</div>
-                <div class="detail">4,194 則訊息</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">回應中位數</div>
-                <div class="number">35 秒</div>
-                <div class="detail">有效回應 5,485 筆</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">回應平均值</div>
-                <div class="number">27.4 分</div>
-                <div class="detail">含離峰延遲拉高</div>
-            </div>
-        </div>
-    </section>
+        <div class="section-title "><span class="num">1</span> 📊 整體總覽 — 客訴分析</div>
 
-    <!-- Category Distribution -->
-    <section id="category" class="section">
-        <div class="section-title"><span class="num">1a</span> 各類別佔比分析</div>
+        
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">總訊息量</div>
+            <div class="number">32,293</div>
+            <div class="detail">含有效 + 噪音</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">客訴數</div>
+            <div class="number" style="color: var(--danger);">6,562</div>
+            <div class="detail">佔比 20.3%</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">站點數</div>
+            <div class="number" style="color: var(--info);">24</div>
+            <div class="detail">個獨立站點/群</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">噪音比</div>
+            <div class="number" style="color: var(--warning);">13.0%</div>
+            <div class="detail">系統/閒聊訊息</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">最大類別</div>
+            <div class="number" style="font-size:1.4em;">帳號問題</div>
+            <div class="detail">1,479 筆</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">P0 緊急</div>
+            <div class="number" style="color: var(--danger);">72</div>
+            <div class="detail">P1: 567 / P2: 5923</div>
+        </div>
+    </div>
+    
+
         <div class="chart-grid">
             <div class="chart-box">
-                <h3>客訴類別圓餅圖（排除「其他」）</h3>
-                <div class="chart-wrap">
-                    <canvas id="categoryPie"></canvas>
-                </div>
+                <h3>客訴類別佔比（排除「其他」）</h3>
+                <div class="chart-wrap"><canvas id="overallCatPie"></canvas></div>
             </div>
             <div class="chart-box">
                 <h3>各類別絕對數量</h3>
-                <div class="chart-wrap">
-                    <canvas id="categoryBar"></canvas>
-                </div>
+                <div class="chart-wrap"><canvas id="overallCatBar"></canvas></div>
             </div>
         </div>
-        <div class="card" style="margin-top: 16px;">
-            <h3>分類說明</h3>
-            <table>
-                <thead>
-                    <tr><th>類別</th><th>件數</th><th>佔比</th><th>說明</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>帳號問題</td><td><strong>1,479</strong></td><td>5.3%</td><td>登入失敗、帳號鎖定、密碼重設、帳號異常</td></tr>
-                    <tr><td>優惠活動爭議</td><td><strong>980</strong></td><td>3.5%</td><td>活動條款不符、獎勵未發放、洗碼要求爭議</td></tr>
-                    <tr><td>遊戲上架/串接</td><td><strong>797</strong></td><td>2.8%</td><td>遊戲上架審核、API 串接、ICON 素材、N8/FF 串接</td></tr>
-                    <tr><td>後台操作/業主認知</td><td><strong>762</strong></td><td>2.7%</td><td>後台設定、遊戲參數調整、權限管理</td></tr>
-                    <tr><td>帳務對帳</td><td><strong>392</strong></td><td>1.4%</td><td>三邊對帳差異、漏單、報表不一致（含信用版/N8）</td></tr>
-                    <tr><td>遊戲異常</td><td><strong>371</strong></td><td>1.3%</td><td>遊戲載入失敗、閃退、注單未回傳</td></tr>
-                    <tr><td>充值問題</td><td><strong>344</strong></td><td>1.2%</td><td>充值未入帳、金流通道異常、退款處理</td></tr>
-                    <tr><td>提款問題</td><td><strong>37</strong></td><td>0.1%</td><td>提款被拒、入帳延遲、帳號錯誤</td></tr>
-                    <tr><td style="color: var(--text-dim);">其他</td><td style="color: var(--text-dim);">22,937</td><td style="color: var(--text-dim);">81.6%</td><td style="color: var(--text-dim);">一般對話、雜訊、無法分類訊息</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
 
-    <!-- Trend -->
-    <section id="trend" class="section">
-        <div class="section-title"><span class="num">1b</span> 客訴趨勢折線圖</div>
+        <div class="card" style="margin-bottom: 24px;">
+            <h3>分析摘要</h3>
+            <p style="color:#ccc;line-height:1.7;">全產品線共 32,293 則訊息，其中 6,562 則為客訴相關。前五大類別：帳號問題(1479)、優惠活動爭議(980)、遊戲上架/串接(797)、後台操作/業主認知(762)、帳務對帳(392)。</p>
+            <p style="color:var(--text-dim);margin-top:8px;font-size:0.9em;">Top 5 站點：N8_印度站(772)、A95_九五至尊(549)、JIN_錢老爺(541)、L09_伍洲(538)、L04_大頭仔(465)</p>
+        </div>
+
         <div class="chart-grid">
             <div class="chart-box">
                 <h3>近 30 日趨勢</h3>
-                <div class="chart-wrap"><canvas id="trend30"></canvas></div>
+                <div class="chart-wrap"><canvas id="overallTrend30"></canvas></div>
             </div>
             <div class="chart-box">
                 <h3>近 90 日趨勢</h3>
-                <div class="chart-wrap"><canvas id="trend90"></canvas></div>
+                <div class="chart-wrap"><canvas id="overallTrend90"></canvas></div>
             </div>
         </div>
-        <div class="card">
-            <h3>趨勢觀察重點</h3>
-            <ul style="margin-left: 20px; color: #ccc;">
-                <li><strong>帳號問題</strong>持續為最高頻類別，每日平均 20 件，1 月底及 2 月中有明顯峰值</li>
-                <li><strong>優惠活動爭議</strong>在 4/2、4/8 出現顯著突增（38、32 件），疑似新活動上線引發</li>
-                <li><strong>遊戲上架/串接</strong>在 1/28、2/4 出現高峰（20+ 件），對應新遊戲上線潮</li>
-                <li>週末（六、日）訊息量明顯下降，約為工作日的 30-50%</li>
-                <li>農曆年期間（2/14-2/18）訊息量大幅降低，為全期最低點</li>
-            </ul>
-        </div>
-    </section>
 
-    <!-- Station Rankings -->
-    <section id="station" class="section">
-        <div class="section-title"><span class="num">1c</span> 各 LINE 站客訴熱度排行</div>
-        <div class="chart-box" style="margin-bottom: 20px;">
-            <div class="chart-wrap-lg"><canvas id="stationBar"></canvas></div>
+        <div class="chart-box" style="margin-bottom: 24px;">
+            <h3>站點客訴熱度排行</h3>
+            <div style="position:relative;height:840px;"><canvas id="overallStationBar"></canvas></div>
         </div>
-        <div class="card">
-            <h3>站點分級建議</h3>
-            <table>
-                <thead>
-                    <tr><th>等級</th><th>站點</th><th>日均訊息</th><th>建議 SLA</th><th>建議配置</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="badge badge-danger">超高頻</span></td>
-                        <td>N8 印度站、JIN 錢老爺、L09 伍洲、A95 九五至尊</td>
-                        <td>27-90 msg/天</td>
-                        <td>30 分鐘內初回</td>
-                        <td>各配 1-2 名專員</td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-warning">高頻</span></td>
-                        <td>L06 吉滿滿、L04 大頭仔、信用版 QA、FF 外包</td>
-                        <td>15-25 msg/天</td>
-                        <td>1 小時內初回</td>
-                        <td>共用 2-3 名 FAE</td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-info">中高頻</span></td>
-                        <td>L11 辣台、K88 金五吉、L07 錢朝、L12 今晚打老虎</td>
-                        <td>14-24 msg/天</td>
-                        <td>2 小時內初回</td>
-                        <td>共用 FAE 池</td>
-                    </tr>
-                    <tr>
-                        <td><span class="badge badge-success">一般</span></td>
-                        <td>TP 捕魚、巨星、XG/UGS、其餘 LINE 站</td>
-                        <td>1-15 msg/天</td>
-                        <td>4 小時內初回</td>
-                        <td>排班覆蓋即可</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
 
-    <!-- Top 10 -->
-    <section id="top10" class="section">
-        <div class="section-title"><span class="num">1d</span> Top 10 高頻具體問題</div>
-        <div class="top-grid">
-            <div class="chart-box">
-                <div class="chart-wrap-lg"><canvas id="topIssuesChart"></canvas></div>
-            </div>
-            <div>
-                <ul class="issue-list" id="issueList"></ul>
-                <div class="card" style="margin-top: 16px;">
-                    <h3>關鍵發現</h3>
-                    <ul style="margin-left: 16px; color: #ccc; font-size: 0.93em;">
-                        <li><strong>後台設定問題</strong>（796 件）居首，業主對後台操作不熟悉是根因</li>
-                        <li><strong>N8 印度站</strong>（772 件）為外包最大客訴來源，需配專員對接</li>
-                        <li><strong>遊戲上架/ICON</strong>（507 件）技術痛點，3000 張 ICON 曾耗時 80 小時</li>
-                        <li><strong>FF 外包技術</strong>（366 件）4 月底換 ALD 後台，注意新舊系統差異</li>
-                        <li><strong>TP 捕魚串接</strong>（174 件）遊戲商對接需英文 ticket 簡潔回覆</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Severity -->
-    <section id="severity" class="section">
-        <div class="section-title"><span class="num">1e</span> 嚴重度分布</div>
         <div class="chart-grid">
             <div class="chart-box">
-                <h3>嚴重度佔比</h3>
-                <div class="chart-wrap"><canvas id="severityPie"></canvas></div>
+                <h3>嚴重度分布</h3>
+                <div class="chart-wrap"><canvas id="overallSevPie"></canvas></div>
             </div>
             <div class="card">
                 <h3>嚴重度對應處理原則</h3>
                 <table>
-                    <thead><tr><th>等級</th><th>件數</th><th>佔比</th><th>處理原則</th></tr></thead>
+                    <thead><tr><th>等級</th><th>定義</th><th>回應時限</th><th>處理方式</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td><span class="badge badge-danger">P0 緊急</span></td>
-                            <td>72</td>
-                            <td>1.1%</td>
-                            <td>立即處理，S 級走電話 Robin 流程，每 10 分鐘對外更新進度</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge badge-warning">P1 高</span></td>
-                            <td>567</td>
-                            <td>8.6%</td>
-                            <td>優先處理，找當班幹部確認，30 分鐘內給初步回應</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge badge-info">P2 中等</span></td>
-                            <td>5,923</td>
-                            <td>90.3%</td>
-                            <td>標準流程處理，按 SLA 回應</td>
-                        </tr>
+                        <tr><td><span class="badge badge-danger">P0 緊急</span></td><td>大量用戶受影響 / 資金異常</td><td>5 分鐘</td><td>直接電話 Robin</td></tr>
+                        <tr><td><span class="badge badge-warning">P1 高</span></td><td>單一站點整體異常</td><td>15 分鐘</td><td>回報 → Slack → 追蹤</td></tr>
+                        <tr><td><span class="badge badge-info">P2 中</span></td><td>個別用戶問題</td><td>1 小時</td><td>標準 SOP 處理</td></tr>
                     </tbody>
                 </table>
-                <div style="margin-top: 16px; padding: 14px; background: rgba(255,68,68,0.08); border-radius: 6px; border-left: 3px solid var(--danger);">
-                    <strong style="color: var(--danger);">S 級事件判定標準：</strong>
-                    <ul style="margin-left: 16px; margin-top: 6px; color: #ccc; font-size: 0.93em;">
-                        <li>5 分鐘內 3 個類似問題 + 自我驗證仍存在</li>
-                        <li>多玩家同時段同遊戲異常</li>
-                        <li>多站台 / 多遊戲商同時異常</li>
-                        <li>前後台整個無法登入</li>
-                        <li>帳務嚴重不一致</li>
-                        <li style="color: var(--danger);"><strong>寧可錯報不可漏報</strong></li>
-                    </ul>
-                </div>
             </div>
         </div>
     </section>
+    <hr class="section-divider">
+    
 
-    <!-- ==================== 鐵律 ==================== -->
+    <section id="line" class="section">
+        <div class="section-title pl-line"><span class="num">2</span> 💬 LINE站 — 客訴分析</div>
+
+        
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">總訊息量</div>
+            <div class="number">17,116</div>
+            <div class="detail">含有效 + 噪音</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">客訴數</div>
+            <div class="number" style="color: var(--danger);">4,313</div>
+            <div class="detail">佔比 25.2%</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">站點數</div>
+            <div class="number" style="color: var(--info);">14</div>
+            <div class="detail">個獨立站點/群</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">噪音比</div>
+            <div class="number" style="color: var(--warning);">13.4%</div>
+            <div class="detail">系統/閒聊訊息</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">最大類別</div>
+            <div class="number" style="font-size:1.4em;">帳號問題</div>
+            <div class="detail">1,120 筆</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">P0 緊急</div>
+            <div class="number" style="color: var(--danger);">42</div>
+            <div class="detail">P1: 182 / P2: 4089</div>
+        </div>
+    </div>
+    
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>客訴類別佔比（排除「其他」）</h3>
+                <div class="chart-wrap"><canvas id="lineCatPie"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>各類別絕對數量</h3>
+                <div class="chart-wrap"><canvas id="lineCatBar"></canvas></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 24px;">
+            <h3>分析摘要</h3>
+            <p style="color:#ccc;line-height:1.7;">LINE站為核心產品線，涵蓋 14 個站點。帳號問題居首（1120），其次為優惠活動爭議（843）。</p>
+            <p style="color:var(--text-dim);margin-top:8px;font-size:0.9em;">Top 5 站點：A95_九五至尊(549)、JIN_錢老爺(541)、L09_伍洲(538)、L04_大頭仔(465)、L06_吉滿滿(425)</p>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>近 30 日趨勢</h3>
+                <div class="chart-wrap"><canvas id="lineTrend30"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>近 90 日趨勢</h3>
+                <div class="chart-wrap"><canvas id="lineTrend90"></canvas></div>
+            </div>
+        </div>
+
+        <div class="chart-box" style="margin-bottom: 24px;">
+            <h3>站點客訴熱度排行</h3>
+            <div style="position:relative;height:490px;"><canvas id="lineStationBar"></canvas></div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>嚴重度分布</h3>
+                <div class="chart-wrap"><canvas id="lineSevPie"></canvas></div>
+            </div>
+            <div class="card">
+                <h3>嚴重度對應處理原則</h3>
+                <table>
+                    <thead><tr><th>等級</th><th>定義</th><th>回應時限</th><th>處理方式</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="badge badge-danger">P0 緊急</span></td><td>大量用戶受影響 / 資金異常</td><td>5 分鐘</td><td>直接電話 Robin</td></tr>
+                        <tr><td><span class="badge badge-warning">P1 高</span></td><td>單一站點整體異常</td><td>15 分鐘</td><td>回報 → Slack → 追蹤</td></tr>
+                        <tr><td><span class="badge badge-info">P2 中</span></td><td>個別用戶問題</td><td>1 小時</td><td>標準 SOP 處理</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <hr class="section-divider">
+    
+
+    <section id="credit" class="section">
+        <div class="section-title pl-credit"><span class="num">3</span> 💳 信用版 — 客訴分析</div>
+
+        
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">總訊息量</div>
+            <div class="number">2,558</div>
+            <div class="detail">含有效 + 噪音</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">客訴數</div>
+            <div class="number" style="color: var(--danger);">706</div>
+            <div class="detail">佔比 27.6%</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">站點數</div>
+            <div class="number" style="color: var(--info);">2</div>
+            <div class="detail">個獨立站點/群</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">噪音比</div>
+            <div class="number" style="color: var(--warning);">11.0%</div>
+            <div class="detail">系統/閒聊訊息</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">最大類別</div>
+            <div class="number" style="font-size:1.4em;">帳務對帳</div>
+            <div class="detail">119 筆</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">P0 緊急</div>
+            <div class="number" style="color: var(--danger);">8</div>
+            <div class="detail">P1: 109 / P2: 589</div>
+        </div>
+    </div>
+    
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>客訴類別佔比（排除「其他」）</h3>
+                <div class="chart-wrap"><canvas id="creditCatPie"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>各類別絕對數量</h3>
+                <div class="chart-wrap"><canvas id="creditCatBar"></canvas></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 24px;">
+            <h3>分析摘要</h3>
+            <p style="color:#ccc;line-height:1.7;">信用版包含 QA 及 FT 兩站，帳務對帳為特色問題（119），反映信用版業務性質。P1 高嚴重度比例偏高（109）。</p>
+            <p style="color:var(--text-dim);margin-top:8px;font-size:0.9em;">Top 5 站點：信用版_QA(444)、信用版_FT(262)</p>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>近 30 日趨勢</h3>
+                <div class="chart-wrap"><canvas id="creditTrend30"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>近 90 日趨勢</h3>
+                <div class="chart-wrap"><canvas id="creditTrend90"></canvas></div>
+            </div>
+        </div>
+
+        <div class="chart-box" style="margin-bottom: 24px;">
+            <h3>站點客訴熱度排行</h3>
+            <div style="position:relative;height:300px;"><canvas id="creditStationBar"></canvas></div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>嚴重度分布</h3>
+                <div class="chart-wrap"><canvas id="creditSevPie"></canvas></div>
+            </div>
+            <div class="card">
+                <h3>嚴重度對應處理原則</h3>
+                <table>
+                    <thead><tr><th>等級</th><th>定義</th><th>回應時限</th><th>處理方式</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="badge badge-danger">P0 緊急</span></td><td>大量用戶受影響 / 資金異常</td><td>5 分鐘</td><td>直接電話 Robin</td></tr>
+                        <tr><td><span class="badge badge-warning">P1 高</span></td><td>單一站點整體異常</td><td>15 分鐘</td><td>回報 → Slack → 追蹤</td></tr>
+                        <tr><td><span class="badge badge-info">P2 中</span></td><td>個別用戶問題</td><td>1 小時</td><td>標準 SOP 處理</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <hr class="section-divider">
+    
+
+    <section id="vendor" class="section">
+        <div class="section-title pl-vendor"><span class="num">4</span> 🎮 遊戲商 — 客訴分析</div>
+
+        
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">總訊息量</div>
+            <div class="number">1,034</div>
+            <div class="detail">含有效 + 噪音</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">客訴數</div>
+            <div class="number" style="color: var(--danger);">270</div>
+            <div class="detail">佔比 26.1%</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">站點數</div>
+            <div class="number" style="color: var(--info);">3</div>
+            <div class="detail">個獨立站點/群</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">噪音比</div>
+            <div class="number" style="color: var(--warning);">4.4%</div>
+            <div class="detail">系統/閒聊訊息</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">最大類別</div>
+            <div class="number" style="font-size:1.4em;">遊戲異常</div>
+            <div class="detail">64 筆</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">P0 緊急</div>
+            <div class="number" style="color: var(--danger);">6</div>
+            <div class="detail">P1: 45 / P2: 219</div>
+        </div>
+    </div>
+    
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>客訴類別佔比（排除「其他」）</h3>
+                <div class="chart-wrap"><canvas id="vendorCatPie"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>各類別絕對數量</h3>
+                <div class="chart-wrap"><canvas id="vendorCatBar"></canvas></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 24px;">
+            <h3>分析摘要</h3>
+            <p style="color:#ccc;line-height:1.7;">遊戲商包含 TP 捕魚、XG Super、UGS 捕魚。遊戲異常為首要問題（64），噪音比最低（4.4%），問題品質高。</p>
+            <p style="color:var(--text-dim);margin-top:8px;font-size:0.9em;">Top 5 站點：TP_捕魚(174)、TG_UGS捕魚(50)、XG_Super(46)</p>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>近 30 日趨勢</h3>
+                <div class="chart-wrap"><canvas id="vendorTrend30"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>近 90 日趨勢</h3>
+                <div class="chart-wrap"><canvas id="vendorTrend90"></canvas></div>
+            </div>
+        </div>
+
+        <div class="chart-box" style="margin-bottom: 24px;">
+            <h3>站點客訴熱度排行</h3>
+            <div style="position:relative;height:300px;"><canvas id="vendorStationBar"></canvas></div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>嚴重度分布</h3>
+                <div class="chart-wrap"><canvas id="vendorSevPie"></canvas></div>
+            </div>
+            <div class="card">
+                <h3>嚴重度對應處理原則</h3>
+                <table>
+                    <thead><tr><th>等級</th><th>定義</th><th>回應時限</th><th>處理方式</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="badge badge-danger">P0 緊急</span></td><td>大量用戶受影響 / 資金異常</td><td>5 分鐘</td><td>直接電話 Robin</td></tr>
+                        <tr><td><span class="badge badge-warning">P1 高</span></td><td>單一站點整體異常</td><td>15 分鐘</td><td>回報 → Slack → 追蹤</td></tr>
+                        <tr><td><span class="badge badge-info">P2 中</span></td><td>個別用戶問題</td><td>1 小時</td><td>標準 SOP 處理</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <hr class="section-divider">
+    
+
+    <section id="outsource" class="section">
+        <div class="section-title pl-outsource"><span class="num">5</span> 🌐 外包 — 客訴分析</div>
+
+        
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">總訊息量</div>
+            <div class="number">11,585</div>
+            <div class="detail">含有效 + 噪音</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">客訴數</div>
+            <div class="number" style="color: var(--danger);">1,273</div>
+            <div class="detail">佔比 11.0%</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">站點數</div>
+            <div class="number" style="color: var(--info);">5</div>
+            <div class="detail">個獨立站點/群</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">噪音比</div>
+            <div class="number" style="color: var(--warning);">13.5%</div>
+            <div class="detail">系統/閒聊訊息</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">最大類別</div>
+            <div class="number" style="font-size:1.4em;">帳號問題</div>
+            <div class="detail">210 筆</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">P0 緊急</div>
+            <div class="number" style="color: var(--danger);">16</div>
+            <div class="detail">P1: 231 / P2: 1026</div>
+        </div>
+    </div>
+    
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>客訴類別佔比（排除「其他」）</h3>
+                <div class="chart-wrap"><canvas id="outsourceCatPie"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>各類別絕對數量</h3>
+                <div class="chart-wrap"><canvas id="outsourceCatBar"></canvas></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 24px;">
+            <h3>分析摘要</h3>
+            <p style="color:#ccc;line-height:1.7;">外包涵蓋 N8 印度站（最大量）、FF 外包技術、巨星等 5 站。N8 印度站客訴量 772 為全公司單站最高，需重點關注。</p>
+            <p style="color:var(--text-dim);margin-top:8px;font-size:0.9em;">Top 5 站點：N8_印度站(772)、FF_外包技術(366)、巨星_技術對接(69)、N8_S級告警(63)、巨星_資方(3)</p>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>近 30 日趨勢</h3>
+                <div class="chart-wrap"><canvas id="outsourceTrend30"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>近 90 日趨勢</h3>
+                <div class="chart-wrap"><canvas id="outsourceTrend90"></canvas></div>
+            </div>
+        </div>
+
+        <div class="chart-box" style="margin-bottom: 24px;">
+            <h3>站點客訴熱度排行</h3>
+            <div style="position:relative;height:300px;"><canvas id="outsourceStationBar"></canvas></div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>嚴重度分布</h3>
+                <div class="chart-wrap"><canvas id="outsourceSevPie"></canvas></div>
+            </div>
+            <div class="card">
+                <h3>嚴重度對應處理原則</h3>
+                <table>
+                    <thead><tr><th>等級</th><th>定義</th><th>回應時限</th><th>處理方式</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="badge badge-danger">P0 緊急</span></td><td>大量用戶受影響 / 資金異常</td><td>5 分鐘</td><td>直接電話 Robin</td></tr>
+                        <tr><td><span class="badge badge-warning">P1 高</span></td><td>單一站點整體異常</td><td>15 分鐘</td><td>回報 → Slack → 追蹤</td></tr>
+                        <tr><td><span class="badge badge-info">P2 中</span></td><td>個別用戶問題</td><td>1 小時</td><td>標準 SOP 處理</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <hr class="section-divider">
+    
+
+    <section id="compare" class="section">
+        <div class="section-title"><span class="num">6</span> 📈 產品線對比分析</div>
+
+        <div class="pl-comparison-grid">
+            <div class="pl-card" style="border-top-color: #00B4D8;">
+                <h4 style="color: #00B4D8;">💬 LINE站</h4>
+                <div class="pl-stat"><span>總訊息</span><span class="val">17,116</span></div>
+                <div class="pl-stat"><span>客訴數</span><span class="val" style="color:var(--danger)">4,313</span></div>
+                <div class="pl-stat"><span>站點數</span><span class="val">14</span></div>
+                <div class="pl-stat"><span>客訴率</span><span class="val">25.2%</span></div>
+            </div>
+            <div class="pl-card" style="border-top-color: #00D99F;">
+                <h4 style="color: #00D99F;">💳 信用版</h4>
+                <div class="pl-stat"><span>總訊息</span><span class="val">2,558</span></div>
+                <div class="pl-stat"><span>客訴數</span><span class="val" style="color:var(--danger)">706</span></div>
+                <div class="pl-stat"><span>站點數</span><span class="val">2</span></div>
+                <div class="pl-stat"><span>客訴率</span><span class="val">27.6%</span></div>
+            </div>
+            <div class="pl-card" style="border-top-color: #9D4EDD;">
+                <h4 style="color: #9D4EDD;">🎮 遊戲商</h4>
+                <div class="pl-stat"><span>總訊息</span><span class="val">1,034</span></div>
+                <div class="pl-stat"><span>客訴數</span><span class="val" style="color:var(--danger)">270</span></div>
+                <div class="pl-stat"><span>站點數</span><span class="val">3</span></div>
+                <div class="pl-stat"><span>客訴率</span><span class="val">26.1%</span></div>
+            </div>
+            <div class="pl-card" style="border-top-color: #FB5607;">
+                <h4 style="color: #FB5607;">🌐 外包</h4>
+                <div class="pl-stat"><span>總訊息</span><span class="val">11,585</span></div>
+                <div class="pl-stat"><span>客訴數</span><span class="val" style="color:var(--danger)">1,273</span></div>
+                <div class="pl-stat"><span>站點數</span><span class="val">5</span></div>
+                <div class="pl-stat"><span>客訴率</span><span class="val">11.0%</span></div>
+            </div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>各產品線客訴數對比</h3>
+                <div class="chart-wrap"><canvas id="plCompareBar"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>各產品線客訴率對比</h3>
+                <div class="chart-wrap"><canvas id="plCompareRate"></canvas></div>
+            </div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-box">
+                <h3>各產品線訊息量佔比</h3>
+                <div class="chart-wrap"><canvas id="plComparePie"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <h3>各產品線 Top 3 客訴類別</h3>
+                <div class="chart-wrap-lg"><canvas id="plCompareTopCats"></canvas></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom:24px;">
+            <h3>產品線對比關鍵發現</h3>
+            <ul style="margin-left:20px;color:#ccc;line-height:1.8;">
+                <li><strong style="color:#00B4D8;">LINE站</strong>：客訴量最大（4,313），帳號問題為主，需加強帳號相關自助功能</li>
+                <li><strong style="color:#00D99F;">信用版</strong>：帳務對帳為特色問題，P1 比例偏高，需專人跟進帳務類客訴</li>
+                <li><strong style="color:#9D4EDD;">遊戲商</strong>：體量最小但遊戲異常佔比高，噪音比最低（4.4%），問題品質精準</li>
+                <li><strong style="color:#FB5607;">外包</strong>：N8 印度站為全公司單站客訴最高，需建立專屬 SOP</li>
+            </ul>
+        </div>
+    </section>
+    <hr class="section-divider">
+    
 
     <section id="rules" class="section">
         <div class="section-title"><span class="num">!</span> FAE 鐵律（必讀）</div>
         <div class="rules-box">
             <h3>五大鐵律 — 凌駕所有技術判斷</h3>
             <ol>
-                <li><strong>升級唯一路徑：FAE → 當班幹部 → Robin</strong>。不出現上層人員姓名</li>
-                <li><strong>時間承諾原則：除非 100% 確定，否則不給任何時間承諾</strong>。打太極 + 進度承諾優先</li>
-                <li><strong>金流問題：FAE 自己判斷 → 找當班幹部 → 跟 Robin 確認</strong>，不直接跨級</li>
-                <li><strong>多玩家同時段同遊戲異常 = S 級 + 立刻電話 Robin</strong>（不是發群）</li>
-                <li><strong>對外通訊不出現任何內部人員姓名</strong>，內外嚴格分離</li>
+                <li><strong>先自查再問人</strong> — 查本文件 → FAQ → 歷史對話 → 後台 UAT / Postman → Kibana → 再找工程</li>
+                <li><strong>禁止時間承諾</strong> — 不說「幾分鐘」「幾小時好」→ 用「有進度第一時間同步」</li>
+                <li><strong>禁止絕對用語</strong> — 不說「一定」「絕對」「保證」→ 用「依目前資訊來看…」</li>
+                <li><strong>一次問完不擠牙膏</strong> — 把需要的資料一次列齊，禁止連續追問</li>
+                <li><strong>以條款為準，只引用不解釋</strong> — 活動爭議引用原文，不自行詮釋</li>
             </ol>
         </div>
         <div class="chart-grid">
             <div class="card">
                 <h3 style="color: var(--danger);">禁用話術</h3>
-                <ul style="margin-left: 16px; color: #ff8888;">
-                    <li>「30 分鐘內回您」（除非真的能）</li>
-                    <li>「應該很快就好」</li>
-                    <li>「馬上幫您處理」</li>
-                    <li>「絕對」「保證」「一定」</li>
-                    <li>任何具體時間數字（除非 100% 把握）</li>
-                </ul>
+                <table>
+                    <thead><tr><th>禁止說法</th><th>原因</th></tr></thead>
+                    <tbody>
+                        <tr><td style="color:#ff8888;">「一定能解決」「保證沒問題」</td><td>無法保證結果</td></tr>
+                        <tr><td style="color:#ff8888;">「預計 30 分鐘內完成」</td><td>時間不可控</td></tr>
+                        <tr><td style="color:#ff8888;">「這是工程的問題」</td><td>禁止甩鍋</td></tr>
+                        <tr><td style="color:#ff8888;">「之前也是這樣處理」</td><td>每次需獨立確認</td></tr>
+                    </tbody>
+                </table>
             </div>
             <div class="card">
                 <h3 style="color: var(--success);">建議話術（進度承諾）</h3>
-                <ul style="margin-left: 16px; color: #88ffcc;">
-                    <li>「立即為您查詢中，有結果第一時間回覆」</li>
-                    <li>「正在跟相關單位確認，稍後同步進度給您」</li>
-                    <li>「這部分需要再確認，確認後立即回您」</li>
-                    <li>「了解您的狀況，我們持續追蹤中」</li>
-                    <li>「進度上有任何變化第一時間同步」</li>
-                </ul>
+                <table>
+                    <thead><tr><th>建議說法</th><th>適用場景</th></tr></thead>
+                    <tbody>
+                        <tr><td style="color:#88ff88;">「已收到，確認中，有進度第一時間同步」</td><td>所有問題的通用開場</td></tr>
+                        <tr><td style="color:#88ff88;">「依目前資訊來看，可能是 XX 原因」</td><td>需推測原因時</td></tr>
+                        <tr><td style="color:#88ff88;">「已回報相關單位，目前等待回覆」</td><td>需升級時</td></tr>
+                        <tr><td style="color:#88ff88;">「麻煩提供 XX，我們加速處理」</td><td>需補充資料時</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="card" style="margin-top: 20px;">
+        <div class="card" style="margin-top:20px;">
             <h3>鐵律違反案例（實際紀錄）</h3>
             <table>
-                <thead><tr><th>類型</th><th>站點</th><th>人員</th><th>日期</th><th>內容</th></tr></thead>
+                <thead><tr><th>違規類型</th><th>站點</th><th>人員</th><th>日期</th><th>內容</th></tr></thead>
                 <tbody id="violationsBody"></tbody>
             </table>
-            <p style="margin-top: 12px; color: var(--text-dim); font-size: 0.88em;">以上為系統自動檢出的 12 筆違反紀錄，作為團隊學習參考。</p>
         </div>
     </section>
-
-    <!-- ==================== PART 2: 標準回覆範本 ==================== -->
+    <hr class="section-divider">
+    
 
     <section id="templates" class="section">
-        <div class="section-title"><span class="num">2</span> 十大高頻問題標準回覆範本</div>
-        <p style="color: var(--text-dim); margin-bottom: 20px;">以下 10 篇範本依據 Top 10 高頻問題編寫，每篇包含問題描述、回覆話術、注意事項。所有話術均遵循鐵律：不做時間承諾、不透露內部人員姓名。</p>
-
-        <div class="template-grid" id="templateGrid">
-            <!-- Populated by JS -->
-        </div>
+        <div class="section-title"><span class="num">7</span> 十大高頻問題標準回覆範本</div>
+        <p style="color:var(--text-dim);margin-bottom:16px;">基於客訴分析得出的 Top 10 高頻問題，每則包含標準回覆話術及注意事項。</p>
+        <div class="template-grid" id="templateGrid"></div>
     </section>
-
-    <!-- ==================== PART 3: FAQ ==================== -->
+    <hr class="section-divider">
+    
 
     <section id="faq" class="section">
-        <div class="section-title"><span class="num">3</span> 常見問題解答 (FAQ)</div>
-        <p style="color: var(--text-dim); margin-bottom: 20px;">點擊問題展開回答。供 FAE 日常查閱，所有回答均符合 Wolves Digital 客服語氣標準。</p>
-
-        <div id="faqContainer">
-            <!-- Populated by JS -->
-        </div>
+        <div class="section-title"><span class="num">8</span> 常見問題解答 (FAQ)</div>
+        <p style="color:var(--text-dim);margin-bottom:16px;">8 大類別常見問答，可點擊展開查看解答。</p>
+        <div id="faqContainer"></div>
     </section>
-
-    <!-- ==================== 升級流程 ==================== -->
+    <hr class="section-divider">
+    
 
     <section id="escalation" class="section">
         <div class="section-title"><span class="num">+</span> 升級流程與找對的人</div>
-
         <div class="card" style="margin-bottom: 20px;">
             <h3>標準升級鏈</h3>
             <div class="flow-steps">
@@ -890,7 +837,6 @@
                 <div class="flow-step" style="border-color: var(--danger); background: rgba(255,68,68,0.15);">升級 Robin<br><small style="color:var(--text-dim)">一切由 Robin 整合判斷</small></div>
             </div>
         </div>
-
         <div class="chart-grid">
             <div class="card">
                 <h3>Slack 找對的人</h3>
@@ -929,37 +875,218 @@
             </div>
         </div>
     </section>
+    
 
     <footer>
-        <p>Wolves Digital FAE 客服知識庫簡報 v1.1 | 資料截至 2026-04-13 | 含 N8/FF/TP/XG/UGS 遊戲商及外包 | 更新週期：每月</p>
-        <p style="margin-top: 4px;">有疑問請聯繫客服主管 | 下次更新預計 2026-05-13</p>
+        <p>Wolves Digital FAE 客服知識庫簡報 v2.0 | 資料截至 2026-04-13 | 4 大產品線 / 24 站點 / 32,293 筆訊息</p>
+        <p style="margin-top: 4px;">含 LINE站(14) / 信用版(2) / 遊戲商(3) / 外包(5) 完整分析 | 更新週期：每月</p>
     </footer>
 
 </div>
 
 <script>
-// ========== DATA ==========
-const CATEGORIES = {
-    "帳號問題": 2083, "優惠活動爭議": 1112, "後台操作/業主認知": 864,
-    "充值問題": 559, "遊戲上架/串接": 553, "遊戲異常": 552,
-    "帳務對帳": 301, "提款問題": 28
-};
-const CATEGORIES_ALL = Object.assign({"其他": 7320}, CATEGORIES);
+const COLORS = ['#FF6B35','#00B4D8','#00D99F','#FFB300','#FF4444','#9D4EDD','#3A86FF','#FB5607','#8338EC','#FFBE0B'];
+Chart.defaults.color = '#aaa';
+Chart.defaults.borderColor = 'rgba(255,107,53,0.1)';
+Chart.defaults.font.family = "system-ui,'Noto Sans TC',sans-serif";
 
-const STATION = {
-    "JIN_錢老爺":785,"A95_九五至尊":691,"L09_伍洲":586,"L06_吉滿滿":556,
-    "L04_大頭仔":552,"信用版_QA":493,"L11_辣台":410,"L07_錢朝":386,
-    "K88_金五吉":377,"L06_吉滿滿_主管群":332,"L12_今晚打老虎":271,
-    "信用版_FT":269,"L05_Mova":187,"L10_越南版":55,"L08_財神虎":52,"L13_第一名":50
-};
+const OVERALL_CATS = {"帳號問題": 1479, "優惠活動爭議": 980, "遊戲上架/串接": 797, "後台操作/業主認知": 762, "帳務對帳": 392, "遊戲異常": 371, "充值問題": 344, "提款問題": 37};
+const OVERALL_CATS_ALL = {"其他": 22937, "帳號問題": 1479, "優惠活動爭議": 980, "遊戲上架/串接": 797, "後台操作/業主認知": 762, "帳務對帳": 392, "遊戲異常": 371, "充值問題": 344, "提款問題": 37};
+const OVERALL_STATIONS = {"N8_印度站": 772, "A95_九五至尊": 549, "JIN_錢老爺": 541, "L09_伍洲": 538, "L04_大頭仔": 465, "信用版_QA": 444, "L06_吉滿滿": 425, "FF_外包技術": 366, "L11_辣台": 352, "K88_金五吉": 314, "L07_錢朝": 284, "L12_今晚打老虎": 274, "L06_吉滿滿_主管群": 269, "信用版_FT": 262, "TP_捕魚": 174, "L05_Mova": 161, "巨星_技術對接": 69, "N8_S級告警": 63, "TG_UGS捕魚": 50, "L08_財神虎": 48, "L10_越南版": 48, "XG_Super": 46, "L13_第一名": 45, "巨星_資方": 3};
+const OVERALL_DAILY = {"2026-01-01": {"其他": 144, "帳號問題": 14, "後台操作/業主認知": 2, "優惠活動爭議": 5, "帳務對帳": 4, "提款問題": 3, "遊戲異常": 1, "遊戲上架/串接": 2}, "2026-01-02": {"後台操作/業主認知": 11, "其他": 231, "帳號問題": 4, "充值問題": 11, "帳務對帳": 2, "遊戲異常": 5, "優惠活動爭議": 10, "遊戲上架/串接": 11}, "2026-01-03": {"帳號問題": 11, "其他": 126, "充值問題": 1, "後台操作/業主認知": 3, "遊戲異常": 2, "遊戲上架/串接": 1}, "2026-01-04": {"其他": 161, "帳號問題": 6, "後台操作/業主認知": 1, "遊戲上架/串接": 9, "充值問題": 2, "遊戲異常": 4, "帳務對帳": 2}, "2026-01-05": {"優惠活動爭議": 4, "其他": 245, "遊戲上架/串接": 16, "充值問題": 5, "帳號問題": 9, "帳務對帳": 2, "遊戲異常": 5, "後台操作/業主認知": 7}, "2026-01-06": {"其他": 263, "遊戲上架/串接": 15, "優惠活動爭議": 4, "帳號問題": 17, "充值問題": 4, "遊戲異常": 3, "後台操作/業主認知": 6}, "2026-01-07": {"其他": 201, "帳號問題": 8, "後台操作/業主認知": 10, "優惠活動爭議": 9, "遊戲上架/串接": 1, "遊戲異常": 3, "充值問題": 1, "帳務對帳": 7}, "2026-01-08": {"帳號問題": 20, "其他": 209, "遊戲上架/串接": 5, "優惠活動爭議": 9, "遊戲異常": 5, "後台操作/業主認知": 7, "充值問題": 3, "帳務對帳": 3}, "2026-01-09": {"其他": 192, "遊戲上架/串接": 11, "帳號問題": 9, "優惠活動爭議": 4, "後台操作/業主認知": 5, "遊戲異常": 6, "充值問題": 3, "帳務對帳": 1}, "2026-01-10": {"帳號問題": 7, "其他": 183, "遊戲上架/串接": 7, "帳務對帳": 9, "優惠活動爭議": 3, "後台操作/業主認知": 3, "遊戲異常": 1, "充值問題": 2}, "2026-01-11": {"後台操作/業主認知": 9, "其他": 183, "遊戲上架/串接": 7, "帳號問題": 4, "遊戲異常": 1, "優惠活動爭議": 5}, "2026-01-12": {"其他": 251, "後台操作/業主認知": 6, "帳號問題": 8, "優惠活動爭議": 9, "充值問題": 2, "遊戲異常": 6, "帳務對帳": 3, "遊戲上架/串接": 2}, "2026-01-13": {"其他": 283, "遊戲上架/串接": 4, "後台操作/業主認知": 19, "帳號問題": 26, "充值問題": 6, "帳務對帳": 4, "優惠活動爭議": 16, "遊戲異常": 9}, "2026-01-14": {"帳號問題": 23, "其他": 282, "後台操作/業主認知": 6, "遊戲上架/串接": 11, "優惠活動爭議": 9, "帳務對帳": 2, "遊戲異常": 3, "充值問題": 2, "提款問題": 2}, "2026-01-15": {"其他": 235, "後台操作/業主認知": 8, "帳號問題": 21, "優惠活動爭議": 17, "遊戲上架/串接": 10, "帳務對帳": 1, "遊戲異常": 2, "提款問題": 3, "充值問題": 2}, "2026-01-16": {"遊戲上架/串接": 4, "其他": 249, "優惠活動爭議": 22, "充值問題": 6, "後台操作/業主認知": 2, "帳號問題": 16, "帳務對帳": 4}, "2026-01-17": {"帳號問題": 14, "其他": 127, "優惠活動爭議": 9, "遊戲上架/串接": 2, "帳務對帳": 2, "後台操作/業主認知": 2, "遊戲異常": 2, "充值問題": 1}, "2026-01-18": {"其他": 207, "帳號問題": 9, "充值問題": 5, "優惠活動爭議": 4, "帳務對帳": 3, "遊戲上架/串接": 5, "遊戲異常": 8, "後台操作/業主認知": 5}, "2026-01-19": {"其他": 171, "遊戲上架/串接": 11, "帳號問題": 14, "後台操作/業主認知": 11, "優惠活動爭議": 9, "帳務對帳": 1, "充值問題": 1, "遊戲異常": 1}, "2026-01-20": {"其他": 246, "遊戲上架/串接": 10, "帳號問題": 12, "優惠活動爭議": 11, "後台操作/業主認知": 11, "帳務對帳": 5, "充值問題": 5, "遊戲異常": 3}, "2026-01-21": {"其他": 288, "遊戲上架/串接": 11, "帳號問題": 20, "優惠活動爭議": 6, "後台操作/業主認知": 16, "帳務對帳": 17, "遊戲異常": 2}, "2026-01-22": {"帳號問題": 25, "其他": 260, "遊戲上架/串接": 5, "遊戲異常": 9, "後台操作/業主認知": 5, "優惠活動爭議": 16, "帳務對帳": 6, "充值問題": 7}, "2026-01-23": {"遊戲上架/串接": 7, "其他": 168, "帳號問題": 11, "優惠活動爭議": 5, "後台操作/業主認知": 2, "遊戲異常": 6, "帳務對帳": 2}, "2026-01-24": {"帳號問題": 15, "遊戲異常": 11, "其他": 161, "遊戲上架/串接": 2, "帳務對帳": 11, "後台操作/業主認知": 4, "優惠活動爭議": 2}, "2026-01-25": {"帳號問題": 8, "其他": 131, "帳務對帳": 10, "後台操作/業主認知": 9, "遊戲異常": 2, "遊戲上架/串接": 1, "充值問題": 1, "優惠活動爭議": 1}, "2026-01-26": {"其他": 334, "帳號問題": 43, "後台操作/業主認知": 22, "遊戲上架/串接": 20, "優惠活動爭議": 11, "充值問題": 7, "帳務對帳": 7, "遊戲異常": 6}, "2026-01-27": {"其他": 335, "帳號問題": 21, "優惠活動爭議": 13, "遊戲上架/串接": 14, "後台操作/業主認知": 9, "充值問題": 3, "遊戲異常": 1, "帳務對帳": 6}, "2026-01-28": {"遊戲上架/串接": 29, "其他": 384, "優惠活動爭議": 12, "帳號問題": 20, "遊戲異常": 7, "帳務對帳": 14, "充值問題": 4, "後台操作/業主認知": 4}, "2026-01-29": {"其他": 299, "後台操作/業主認知": 13, "充值問題": 5, "帳號問題": 27, "遊戲上架/串接": 16, "遊戲異常": 2, "帳務對帳": 9, "優惠活動爭議": 3, "提款問題": 1}, "2026-01-30": {"帳號問題": 11, "其他": 223, "遊戲上架/串接": 8, "帳務對帳": 9, "後台操作/業主認知": 3, "優惠活動爭議": 6, "充值問題": 2, "遊戲異常": 1}, "2026-01-31": {"帳號問題": 10, "其他": 146, "後台操作/業主認知": 10, "遊戲上架/串接": 2, "優惠活動爭議": 3, "充值問題": 8, "帳務對帳": 1, "提款問題": 1, "遊戲異常": 1}, "2026-02-01": {"帳號問題": 17, "優惠活動爭議": 12, "其他": 282, "帳務對帳": 1, "遊戲異常": 4, "遊戲上架/串接": 11, "後台操作/業主認知": 11, "充值問題": 9}, "2026-02-02": {"遊戲上架/串接": 9, "其他": 356, "帳號問題": 32, "優惠活動爭議": 11, "帳務對帳": 10, "後台操作/業主認知": 10, "充值問題": 17, "遊戲異常": 2}, "2026-02-03": {"其他": 322, "後台操作/業主認知": 19, "帳號問題": 25, "優惠活動爭議": 13, "遊戲上架/串接": 4, "充值問題": 2, "遊戲異常": 3, "帳務對帳": 4}, "2026-02-04": {"其他": 374, "後台操作/業主認知": 16, "提款問題": 2, "充值問題": 10, "帳號問題": 20, "遊戲上架/串接": 17, "遊戲異常": 2, "優惠活動爭議": 17, "帳務對帳": 16}, "2026-02-05": {"其他": 189, "遊戲上架/串接": 7, "優惠活動爭議": 13, "帳號問題": 11, "後台操作/業主認知": 7, "充值問題": 1, "遊戲異常": 3, "帳務對帳": 2}, "2026-02-06": {"其他": 268, "優惠活動爭議": 22, "帳號問題": 19, "遊戲上架/串接": 7, "後台操作/業主認知": 10, "充值問題": 5, "遊戲異常": 7, "帳務對帳": 2, "提款問題": 1}, "2026-02-07": {"帳號問題": 5, "優惠活動爭議": 3, "其他": 187, "後台操作/業主認知": 4, "帳務對帳": 1, "提款問題": 4, "充值問題": 3, "遊戲上架/串接": 2}, "2026-02-08": {"帳號問題": 6, "其他": 112, "帳務對帳": 5, "遊戲異常": 4, "充值問題": 1, "優惠活動爭議": 5, "後台操作/業主認知": 2}, "2026-02-09": {"帳號問題": 19, "其他": 238, "遊戲上架/串接": 8, "遊戲異常": 7, "帳務對帳": 5, "後台操作/業主認知": 13, "優惠活動爭議": 5, "充值問題": 4}, "2026-02-10": {"帳號問題": 19, "其他": 223, "優惠活動爭議": 10, "遊戲異常": 4, "帳務對帳": 7, "後台操作/業主認知": 1, "提款問題": 1, "遊戲上架/串接": 3}, "2026-02-11": {"後台操作/業主認知": 15, "其他": 382, "優惠活動爭議": 23, "帳號問題": 42, "遊戲上架/串接": 6, "帳務對帳": 7, "遊戲異常": 6, "充值問題": 6}, "2026-02-12": {"帳號問題": 48, "其他": 289, "優惠活動爭議": 17, "遊戲上架/串接": 7, "後台操作/業主認知": 6, "帳務對帳": 1, "遊戲異常": 3, "充值問題": 3}, "2026-02-13": {"其他": 289, "帳號問題": 28, "優惠活動爭議": 11, "後台操作/業主認知": 21, "遊戲上架/串接": 12, "帳務對帳": 15, "充值問題": 5, "遊戲異常": 5}, "2026-02-14": {"帳號問題": 5, "其他": 203, "後台操作/業主認知": 2, "遊戲上架/串接": 6, "優惠活動爭議": 11, "充值問題": 1, "遊戲異常": 3, "帳務對帳": 1}, "2026-02-15": {"帳號問題": 3, "其他": 134, "遊戲上架/串接": 7, "後台操作/業主認知": 4, "優惠活動爭議": 9, "遊戲異常": 5, "充值問題": 3, "帳務對帳": 3}, "2026-02-16": {"帳號問題": 2, "其他": 103, "帳務對帳": 3, "後台操作/業主認知": 1, "遊戲上架/串接": 3}, "2026-02-17": {"帳號問題": 6, "其他": 71, "遊戲異常": 4}, "2026-02-18": {"帳號問題": 3, "遊戲上架/串接": 2, "其他": 76, "優惠活動爭議": 10, "後台操作/業主認知": 3, "充值問題": 2, "遊戲異常": 3}, "2026-02-19": {"帳號問題": 2, "後台操作/業主認知": 3, "其他": 99, "優惠活動爭議": 6, "帳務對帳": 1, "遊戲異常": 4, "遊戲上架/串接": 2}, "2026-02-20": {"帳號問題": 8, "其他": 167, "優惠活動爭議": 7, "遊戲異常": 5, "後台操作/業主認知": 1, "遊戲上架/串接": 4, "充值問題": 3}, "2026-02-21": {"其他": 120, "帳號問題": 8, "遊戲異常": 3, "優惠活動爭議": 7, "帳務對帳": 2, "提款問題": 2, "充值問題": 1, "後台操作/業主認知": 1}, "2026-02-22": {"優惠活動爭議": 3, "其他": 85, "帳號問題": 3, "後台操作/業主認知": 1, "帳務對帳": 3, "遊戲異常": 1, "遊戲上架/串接": 8}, "2026-02-23": {"其他": 196, "遊戲上架/串接": 6, "帳號問題": 7, "優惠活動爭議": 6, "帳務對帳": 4, "充值問題": 9, "遊戲異常": 6, "後台操作/業主認知": 2}, "2026-02-24": {"其他": 271, "帳號問題": 34, "後台操作/業主認知": 10, "遊戲異常": 3, "遊戲上架/串接": 20, "優惠活動爭議": 4, "帳務對帳": 1, "充值問題": 3}, "2026-02-25": {"其他": 240, "後台操作/業主認知": 10, "帳號問題": 28, "遊戲上架/串接": 17, "優惠活動爭議": 18, "充值問題": 7, "帳務對帳": 3}, "2026-02-26": {"其他": 273, "帳號問題": 8, "後台操作/業主認知": 24, "優惠活動爭議": 8, "遊戲上架/串接": 13, "充值問題": 5, "帳務對帳": 2, "遊戲異常": 5}, "2026-02-27": {"其他": 204, "後台操作/業主認知": 8, "優惠活動爭議": 9, "帳號問題": 11, "充值問題": 4, "帳務對帳": 4, "遊戲上架/串接": 7, "遊戲異常": 6}, "2026-02-28": {"帳號問題": 11, "其他": 155, "後台操作/業主認知": 1}, "2026-03-01": {"帳號問題": 11, "其他": 211, "充值問題": 2, "後台操作/業主認知": 7, "遊戲上架/串接": 1, "帳務對帳": 1, "優惠活動爭議": 6, "遊戲異常": 2}, "2026-03-02": {"優惠活動爭議": 14, "其他": 211, "帳號問題": 19, "帳務對帳": 5, "後台操作/業主認知": 7, "遊戲上架/串接": 9, "遊戲異常": 3}, "2026-03-03": {"其他": 218, "帳號問題": 22, "遊戲異常": 2, "後台操作/業主認知": 6, "遊戲上架/串接": 9, "優惠活動爭議": 9, "充值問題": 1}, "2026-03-04": {"其他": 171, "帳號問題": 16, "後台操作/業主認知": 25, "遊戲上架/串接": 3, "充值問題": 3, "優惠活動爭議": 18, "提款問題": 1, "遊戲異常": 1}, "2026-03-05": {"帳號問題": 37, "其他": 293, "後台操作/業主認知": 4, "遊戲上架/串接": 12, "優惠活動爭議": 9, "遊戲異常": 3, "充值問題": 2}, "2026-03-06": {"其他": 309, "遊戲上架/串接": 11, "優惠活動爭議": 20, "帳號問題": 10, "充值問題": 4, "後台操作/業主認知": 4, "遊戲異常": 2, "帳務對帳": 2}, "2026-03-07": {"其他": 158, "帳號問題": 6, "遊戲異常": 2, "優惠活動爭議": 11, "遊戲上架/串接": 3, "充值問題": 1, "後台操作/業主認知": 6}, "2026-03-08": {"其他": 148, "遊戲上架/串接": 2, "帳號問題": 6, "帳務對帳": 1, "後台操作/業主認知": 6, "充值問題": 8, "優惠活動爭議": 4, "遊戲異常": 1}, "2026-03-09": {"其他": 215, "帳號問題": 7, "帳務對帳": 5, "優惠活動爭議": 10, "遊戲上架/串接": 8, "後台操作/業主認知": 2, "遊戲異常": 4, "充值問題": 3}, "2026-03-10": {"其他": 347, "帳號問題": 12, "後台操作/業主認知": 11, "遊戲上架/串接": 23, "優惠活動爭議": 17, "帳務對帳": 15, "充值問題": 1, "遊戲異常": 1}, "2026-03-11": {"後台操作/業主認知": 7, "其他": 214, "帳號問題": 16, "帳務對帳": 5, "優惠活動爭議": 20, "遊戲上架/串接": 6, "充值問題": 8}, "2026-03-12": {"其他": 286, "帳號問題": 9, "後台操作/業主認知": 6, "優惠活動爭議": 18, "充值問題": 3, "帳務對帳": 4, "遊戲上架/串接": 6, "遊戲異常": 5}, "2026-03-13": {"其他": 599, "帳號問題": 38, "後台操作/業主認知": 19, "優惠活動爭議": 26, "遊戲上架/串接": 17, "帳務對帳": 1, "遊戲異常": 6, "充值問題": 15, "提款問題": 6}, "2026-03-14": {"帳號問題": 9, "其他": 123, "後台操作/業主認知": 6, "遊戲上架/串接": 2, "優惠活動爭議": 3, "遊戲異常": 4, "提款問題": 4}, "2026-03-15": {"帳號問題": 2, "其他": 68, "帳務對帳": 1, "遊戲異常": 3, "提款問題": 4}, "2026-03-16": {"帳號問題": 9, "優惠活動爭議": 22, "其他": 243, "充值問題": 4, "遊戲異常": 1, "後台操作/業主認知": 10, "遊戲上架/串接": 5, "帳務對帳": 1, "提款問題": 1}, "2026-03-17": {"其他": 221, "帳號問題": 14, "後台操作/業主認知": 17, "遊戲上架/串接": 16, "優惠活動爭議": 17, "充值問題": 4, "帳務對帳": 3, "遊戲異常": 4}, "2026-03-18": {"其他": 267, "後台操作/業主認知": 19, "優惠活動爭議": 17, "帳號問題": 17, "充值問題": 5, "帳務對帳": 6, "遊戲異常": 2, "遊戲上架/串接": 9}, "2026-03-19": {"其他": 332, "後台操作/業主認知": 18, "帳號問題": 20, "遊戲異常": 3, "遊戲上架/串接": 19, "帳務對帳": 3, "優惠活動爭議": 15, "充值問題": 1}, "2026-03-20": {"其他": 225, "帳號問題": 27, "優惠活動爭議": 22, "後台操作/業主認知": 5, "充值問題": 4, "遊戲異常": 6, "遊戲上架/串接": 3}, "2026-03-21": {"帳號問題": 14, "其他": 195, "優惠活動爭議": 10, "後台操作/業主認知": 1, "遊戲上架/串接": 4, "帳務對帳": 6, "遊戲異常": 3}, "2026-03-22": {"帳號問題": 3, "其他": 100, "充值問題": 1, "後台操作/業主認知": 4, "優惠活動爭議": 2, "帳務對帳": 1}, "2026-03-23": {"後台操作/業主認知": 10, "其他": 229, "帳號問題": 13, "充值問題": 3, "優惠活動爭議": 11, "遊戲上架/串接": 8, "帳務對帳": 3, "遊戲異常": 2}, "2026-03-24": {"其他": 184, "後台操作/業主認知": 12, "帳號問題": 6, "遊戲上架/串接": 9, "優惠活動爭議": 7, "帳務對帳": 2, "充值問題": 2, "遊戲異常": 2}, "2026-03-25": {"帳號問題": 12, "後台操作/業主認知": 7, "其他": 195, "優惠活動爭議": 21, "遊戲上架/串接": 17, "帳務對帳": 3, "充值問題": 3, "遊戲異常": 1}, "2026-03-26": {"其他": 201, "帳號問題": 13, "後台操作/業主認知": 8, "優惠活動爭議": 11, "遊戲異常": 5, "遊戲上架/串接": 17, "充值問題": 4}, "2026-03-27": {"帳號問題": 14, "遊戲異常": 11, "遊戲上架/串接": 17, "其他": 243, "後台操作/業主認知": 1, "帳務對帳": 6, "優惠活動爭議": 8, "充值問題": 2}, "2026-03-28": {"帳號問題": 4, "其他": 107, "優惠活動爭議": 3, "遊戲異常": 2, "充值問題": 2, "後台操作/業主認知": 1, "遊戲上架/串接": 4, "帳務對帳": 4}, "2026-03-29": {"帳號問題": 24, "其他": 212, "帳務對帳": 3, "充值問題": 3, "遊戲異常": 4, "後台操作/業主認知": 6, "優惠活動爭議": 1, "遊戲上架/串接": 1}, "2026-03-30": {"充值問題": 11, "其他": 315, "遊戲上架/串接": 12, "帳號問題": 8, "遊戲異常": 7, "後台操作/業主認知": 15, "優惠活動爭議": 16, "帳務對帳": 1}, "2026-03-31": {"帳務對帳": 3, "其他": 278, "優惠活動爭議": 6, "遊戲上架/串接": 11, "帳號問題": 8, "遊戲異常": 2, "充值問題": 2, "後台操作/業主認知": 2}, "2026-04-01": {"其他": 340, "後台操作/業主認知": 8, "優惠活動爭議": 17, "帳號問題": 18, "充值問題": 7, "遊戲上架/串接": 12, "遊戲異常": 12, "帳務對帳": 2}, "2026-04-02": {"優惠活動爭議": 24, "其他": 309, "帳號問題": 35, "遊戲上架/串接": 15, "後台操作/業主認知": 8, "充值問題": 3, "帳務對帳": 4, "遊戲異常": 2}, "2026-04-03": {"其他": 196, "帳號問題": 11, "優惠活動爭議": 17, "遊戲異常": 2, "遊戲上架/串接": 5, "充值問題": 3, "後台操作/業主認知": 1, "帳務對帳": 1}, "2026-04-04": {"帳號問題": 4, "其他": 178, "充值問題": 2, "後台操作/業主認知": 1, "遊戲異常": 2, "優惠活動爭議": 2, "帳務對帳": 9, "遊戲上架/串接": 2, "提款問題": 1}, "2026-04-05": {"充值問題": 3, "其他": 192, "優惠活動爭議": 1, "後台操作/業主認知": 3, "帳號問題": 4, "帳務對帳": 3, "遊戲上架/串接": 1}, "2026-04-06": {"帳號問題": 3, "其他": 152, "帳務對帳": 4, "遊戲上架/串接": 3, "遊戲異常": 1, "優惠活動爭議": 1, "後台操作/業主認知": 1}, "2026-04-07": {"後台操作/業主認知": 5, "其他": 347, "優惠活動爭議": 15, "帳號問題": 6, "遊戲上架/串接": 18, "遊戲異常": 8, "帳務對帳": 6}, "2026-04-08": {"其他": 334, "後台操作/業主認知": 28, "帳務對帳": 8, "帳號問題": 23, "優惠活動爭議": 10, "充值問題": 11, "遊戲上架/串接": 3, "遊戲異常": 13}, "2026-04-09": {"帳號問題": 16, "其他": 301, "優惠活動爭議": 12, "後台操作/業主認知": 7, "充值問題": 6, "帳務對帳": 11, "遊戲上架/串接": 7, "遊戲異常": 4}, "2026-04-10": {"其他": 254, "帳號問題": 20, "後台操作/業主認知": 3, "帳務對帳": 3, "遊戲上架/串接": 10, "遊戲異常": 5, "優惠活動爭議": 2, "充值問題": 2}, "2026-04-11": {"其他": 204, "帳務對帳": 3, "後台操作/業主認知": 5, "帳號問題": 3, "遊戲上架/串接": 4, "優惠活動爭議": 2, "遊戲異常": 3}, "2026-04-12": {"帳號問題": 16, "其他": 150, "優惠活動爭議": 6, "遊戲上架/串接": 6, "遊戲異常": 9, "充值問題": 2, "帳務對帳": 1, "後台操作/業主認知": 3}, "2026-04-13": {"帳號問題": 1, "帳務對帳": 2, "其他": 36}};
+const OVERALL_SEV = {"P2": 5923, "P1": 567, "P0": 72};
 
-const TOP_ISSUES = [
-    ["後台設定問題",796],["遊戲上架/ICON問題",507],["活動領取失敗",430],
-    ["金流通道問題",277],["維護/更新通知",276],["公會/代理設定",276],
-    ["首儲/續儲優惠設定",131],["注單未回傳",110],["串接API問題",77],["遊戲進不去/閃退",75]
-];
+const LINE_CATS = {"帳號問題": 1120, "優惠活動爭議": 843, "遊戲上架/串接": 578, "後台操作/業主認知": 561, "充值問題": 224, "帳務對帳": 146, "遊戲異常": 124, "提款問題": 3};
+const LINE_CATS_ALL = {"其他": 11216, "帳號問題": 1120, "優惠活動爭議": 843, "遊戲上架/串接": 578, "後台操作/業主認知": 561, "充值問題": 224, "帳務對帳": 146, "遊戲異常": 124, "提款問題": 3};
+const LINE_STATIONS = {"A95_九五至尊": 549, "JIN_錢老爺": 541, "L09_伍洲": 538, "L04_大頭仔": 465, "L06_吉滿滿": 425, "L11_辣台": 352, "K88_金五吉": 314, "L07_錢朝": 284, "L12_今晚打老虎": 274, "L06_吉滿滿_主管群": 269, "L05_Mova": 161, "L08_財神虎": 48, "L10_越南版": 48, "L13_第一名": 45};
+const LINE_DAILY = {"2026-01-01": {"其他": 82, "帳號問題": 13, "優惠活動爭議": 5, "帳務對帳": 3}, "2026-01-02": {"後台操作/業主認知": 6, "其他": 114, "帳號問題": 2, "優惠活動爭議": 6, "帳務對帳": 1, "遊戲上架/串接": 8, "充值問題": 1}, "2026-01-03": {"帳號問題": 10, "其他": 36, "充值問題": 1, "後台操作/業主認知": 2}, "2026-01-04": {"其他": 64, "帳號問題": 3, "遊戲上架/串接": 9, "充值問題": 2, "遊戲異常": 4}, "2026-01-05": {"優惠活動爭議": 1, "其他": 105, "遊戲上架/串接": 15, "充值問題": 3, "帳號問題": 6, "遊戲異常": 5, "後台操作/業主認知": 4}, "2026-01-06": {"其他": 154, "遊戲上架/串接": 14, "優惠活動爭議": 2, "帳號問題": 15, "充值問題": 1, "遊戲異常": 1, "後台操作/業主認知": 3}, "2026-01-07": {"其他": 119, "帳號問題": 8, "後台操作/業主認知": 10, "優惠活動爭議": 9, "遊戲上架/串接": 1, "遊戲異常": 3, "充值問題": 1, "帳務對帳": 2}, "2026-01-08": {"帳號問題": 14, "其他": 108, "遊戲上架/串接": 2, "優惠活動爭議": 9, "遊戲異常": 2, "後台操作/業主認知": 6, "充值問題": 2}, "2026-01-09": {"其他": 116, "遊戲上架/串接": 9, "帳號問題": 8, "優惠活動爭議": 3, "後台操作/業主認知": 2, "遊戲異常": 4, "充值問題": 3}, "2026-01-10": {"帳號問題": 5, "其他": 33, "遊戲上架/串接": 4, "後台操作/業主認知": 1}, "2026-01-11": {"後台操作/業主認知": 9, "其他": 81, "遊戲上架/串接": 7, "帳號問題": 3, "優惠活動爭議": 5}, "2026-01-12": {"其他": 115, "後台操作/業主認知": 5, "帳號問題": 7, "優惠活動爭議": 9, "充值問題": 2, "遊戲異常": 1}, "2026-01-13": {"其他": 152, "遊戲上架/串接": 4, "後台操作/業主認知": 17, "帳號問題": 24, "充值問題": 5, "優惠活動爭議": 16, "遊戲異常": 6, "帳務對帳": 1}, "2026-01-14": {"帳號問題": 18, "其他": 130, "後台操作/業主認知": 5, "遊戲上架/串接": 1, "優惠活動爭議": 8, "帳務對帳": 1, "遊戲異常": 2, "充值問題": 1}, "2026-01-15": {"其他": 135, "後台操作/業主認知": 7, "帳號問題": 17, "優惠活動爭議": 17, "遊戲上架/串接": 9, "遊戲異常": 1}, "2026-01-16": {"遊戲上架/串接": 1, "其他": 134, "優惠活動爭議": 22, "充值問題": 5, "後台操作/業主認知": 1, "帳號問題": 16}, "2026-01-17": {"帳號問題": 10, "其他": 42, "優惠活動爭議": 8, "遊戲上架/串接": 1, "後台操作/業主認知": 1, "遊戲異常": 1}, "2026-01-18": {"其他": 113, "帳號問題": 9, "充值問題": 3, "優惠活動爭議": 4, "遊戲異常": 2, "後台操作/業主認知": 5, "遊戲上架/串接": 2, "帳務對帳": 1}, "2026-01-19": {"其他": 114, "遊戲上架/串接": 9, "帳號問題": 11, "後台操作/業主認知": 10, "優惠活動爭議": 8}, "2026-01-20": {"其他": 154, "遊戲上架/串接": 9, "帳號問題": 11, "優惠活動爭議": 10, "後台操作/業主認知": 6, "充值問題": 5, "遊戲異常": 3}, "2026-01-21": {"其他": 127, "遊戲上架/串接": 9, "帳號問題": 16, "優惠活動爭議": 5, "後台操作/業主認知": 6, "帳務對帳": 11}, "2026-01-22": {"帳號問題": 12, "其他": 125, "遊戲上架/串接": 3, "優惠活動爭議": 16, "遊戲異常": 3, "帳務對帳": 6, "後台操作/業主認知": 2, "充值問題": 6}, "2026-01-23": {"遊戲上架/串接": 7, "其他": 65, "帳號問題": 6, "優惠活動爭議": 4, "後台操作/業主認知": 2}, "2026-01-24": {"帳號問題": 8, "其他": 33, "優惠活動爭議": 2, "後台操作/業主認知": 2, "帳務對帳": 1}, "2026-01-25": {"帳號問題": 4, "其他": 39, "遊戲上架/串接": 1, "遊戲異常": 1, "充值問題": 1, "後台操作/業主認知": 3, "帳務對帳": 1}, "2026-01-26": {"其他": 147, "帳號問題": 37, "後台操作/業主認知": 6, "遊戲上架/串接": 15, "優惠活動爭議": 9, "充值問題": 3, "帳務對帳": 1, "遊戲異常": 2}, "2026-01-27": {"其他": 171, "帳號問題": 16, "優惠活動爭議": 11, "遊戲上架/串接": 9, "後台操作/業主認知": 2, "充值問題": 2, "遊戲異常": 1, "帳務對帳": 2}, "2026-01-28": {"遊戲上架/串接": 24, "其他": 252, "優惠活動爭議": 11, "帳號問題": 18, "遊戲異常": 5, "帳務對帳": 4, "充值問題": 1, "後台操作/業主認知": 3}, "2026-01-29": {"其他": 189, "後台操作/業主認知": 9, "充值問題": 5, "帳號問題": 17, "遊戲上架/串接": 9, "優惠活動爭議": 3, "遊戲異常": 1, "帳務對帳": 7}, "2026-01-30": {"帳號問題": 10, "其他": 130, "後台操作/業主認知": 3, "遊戲上架/串接": 5, "優惠活動爭議": 5, "充值問題": 2}, "2026-01-31": {"帳號問題": 7, "後台操作/業主認知": 9, "其他": 54, "遊戲上架/串接": 1, "優惠活動爭議": 3, "充值問題": 2}, "2026-02-01": {"帳號問題": 12, "優惠活動爭議": 9, "其他": 145, "遊戲上架/串接": 11, "後台操作/業主認知": 10, "充值問題": 7, "遊戲異常": 1}, "2026-02-02": {"遊戲上架/串接": 8, "其他": 220, "帳號問題": 27, "優惠活動爭議": 10, "帳務對帳": 3, "後台操作/業主認知": 9, "充值問題": 15}, "2026-02-03": {"其他": 240, "後台操作/業主認知": 18, "帳號問題": 23, "優惠活動爭議": 13, "遊戲上架/串接": 3, "充值問題": 1, "帳務對帳": 1, "遊戲異常": 1}, "2026-02-04": {"其他": 249, "後台操作/業主認知": 15, "提款問題": 2, "充值問題": 7, "帳號問題": 18, "遊戲上架/串接": 16, "遊戲異常": 1, "優惠活動爭議": 11, "帳務對帳": 9}, "2026-02-05": {"其他": 108, "遊戲上架/串接": 6, "優惠活動爭議": 8, "帳號問題": 9, "後台操作/業主認知": 7, "充值問題": 1, "遊戲異常": 3}, "2026-02-06": {"其他": 151, "優惠活動爭議": 18, "帳號問題": 17, "遊戲上架/串接": 3, "後台操作/業主認知": 9, "充值問題": 4, "遊戲異常": 4, "帳務對帳": 1}, "2026-02-07": {"帳號問題": 3, "優惠活動爭議": 2, "其他": 67, "後台操作/業主認知": 4, "帳務對帳": 1}, "2026-02-08": {"帳號問題": 3, "其他": 36, "充值問題": 1, "優惠活動爭議": 3, "帳務對帳": 3, "後台操作/業主認知": 2, "遊戲異常": 1}, "2026-02-09": {"帳號問題": 10, "其他": 75, "遊戲上架/串接": 8, "後台操作/業主認知": 3, "優惠活動爭議": 4, "充值問題": 2, "帳務對帳": 1}, "2026-02-10": {"帳號問題": 11, "其他": 97, "優惠活動爭議": 8, "帳務對帳": 5, "後台操作/業主認知": 1, "遊戲異常": 1}, "2026-02-11": {"後台操作/業主認知": 14, "其他": 200, "優惠活動爭議": 21, "帳號問題": 35, "遊戲上架/串接": 2, "帳務對帳": 4, "充值問題": 5}, "2026-02-12": {"帳號問題": 42, "其他": 201, "優惠活動爭議": 14, "遊戲上架/串接": 7, "後台操作/業主認知": 6, "帳務對帳": 1, "遊戲異常": 2, "充值問題": 3}, "2026-02-13": {"其他": 175, "帳號問題": 17, "優惠活動爭議": 8, "後台操作/業主認知": 13, "遊戲上架/串接": 4, "帳務對帳": 14, "充值問題": 5, "遊戲異常": 5}, "2026-02-14": {"帳號問題": 2, "其他": 75, "遊戲上架/串接": 3, "優惠活動爭議": 10, "充值問題": 1, "後台操作/業主認知": 1}, "2026-02-15": {"帳號問題": 3, "遊戲上架/串接": 4, "其他": 55, "後台操作/業主認知": 1, "優惠活動爭議": 9, "遊戲異常": 1, "充值問題": 2}, "2026-02-16": {"帳號問題": 2, "其他": 10}, "2026-02-17": {"帳號問題": 1, "其他": 22}, "2026-02-18": {"帳號問題": 1, "遊戲上架/串接": 2, "其他": 21, "優惠活動爭議": 10, "後台操作/業主認知": 2, "充值問題": 2}, "2026-02-19": {"帳號問題": 1, "後台操作/業主認知": 3, "其他": 49, "優惠活動爭議": 5, "帳務對帳": 1, "遊戲異常": 3, "遊戲上架/串接": 1}, "2026-02-20": {"帳號問題": 5, "其他": 61, "優惠活動爭議": 6, "遊戲異常": 4, "後台操作/業主認知": 1, "遊戲上架/串接": 3}, "2026-02-21": {"其他": 54, "帳號問題": 7, "遊戲異常": 3, "優惠活動爭議": 6}, "2026-02-22": {"優惠活動爭議": 2, "其他": 44, "帳號問題": 2, "後台操作/業主認知": 1, "帳務對帳": 2, "遊戲異常": 1, "遊戲上架/串接": 8}, "2026-02-23": {"其他": 106, "遊戲上架/串接": 5, "帳號問題": 5, "優惠活動爭議": 4, "帳務對帳": 1, "充值問題": 9, "遊戲異常": 4, "後台操作/業主認知": 1}, "2026-02-24": {"其他": 173, "帳號問題": 34, "後台操作/業主認知": 7, "遊戲異常": 1, "遊戲上架/串接": 17, "優惠活動爭議": 4, "充值問題": 2}, "2026-02-25": {"其他": 187, "後台操作/業主認知": 10, "帳號問題": 28, "遊戲上架/串接": 16, "優惠活動爭議": 18, "充值問題": 7}, "2026-02-26": {"其他": 137, "帳號問題": 5, "後台操作/業主認知": 7, "優惠活動爭議": 7, "遊戲上架/串接": 7, "充值問題": 3, "帳務對帳": 1, "遊戲異常": 2}, "2026-02-27": {"其他": 130, "後台操作/業主認知": 6, "優惠活動爭議": 9, "帳號問題": 8, "充值問題": 3, "遊戲上架/串接": 5, "遊戲異常": 1}, "2026-02-28": {"帳號問題": 6, "其他": 83}, "2026-03-01": {"帳號問題": 6, "其他": 76, "充值問題": 1, "後台操作/業主認知": 4, "遊戲上架/串接": 1, "優惠活動爭議": 3}, "2026-03-02": {"優惠活動爭議": 13, "其他": 76, "帳號問題": 7, "帳務對帳": 3, "後台操作/業主認知": 4, "遊戲上架/串接": 1, "遊戲異常": 1}, "2026-03-03": {"其他": 161, "帳號問題": 21, "遊戲異常": 2, "後台操作/業主認知": 4, "遊戲上架/串接": 5, "優惠活動爭議": 7, "充值問題": 1}, "2026-03-04": {"其他": 99, "帳號問題": 14, "後台操作/業主認知": 20, "遊戲上架/串接": 3, "充值問題": 3, "優惠活動爭議": 14, "提款問題": 1}, "2026-03-05": {"帳號問題": 35, "其他": 130, "後台操作/業主認知": 4, "遊戲上架/串接": 12, "優惠活動爭議": 9, "遊戲異常": 1, "充值問題": 2}, "2026-03-06": {"其他": 164, "遊戲上架/串接": 9, "優惠活動爭議": 15, "帳號問題": 9, "充值問題": 2, "後台操作/業主認知": 2, "帳務對帳": 2}, "2026-03-07": {"其他": 60, "帳號問題": 5, "優惠活動爭議": 6, "遊戲上架/串接": 3, "充值問題": 1, "後台操作/業主認知": 6}, "2026-03-08": {"其他": 33, "遊戲上架/串接": 2, "帳號問題": 4, "後台操作/業主認知": 3, "充值問題": 1}, "2026-03-09": {"其他": 92, "帳號問題": 4, "優惠活動爭議": 5, "遊戲上架/串接": 8, "遊戲異常": 2, "帳務對帳": 1, "充值問題": 2}, "2026-03-10": {"其他": 192, "帳號問題": 6, "後台操作/業主認知": 8, "遊戲上架/串接": 18, "優惠活動爭議": 17, "帳務對帳": 14, "充值問題": 1}, "2026-03-11": {"後台操作/業主認知": 7, "其他": 108, "帳號問題": 15, "優惠活動爭議": 15, "遊戲上架/串接": 3, "充值問題": 3, "帳務對帳": 3}, "2026-03-12": {"其他": 105, "帳號問題": 8, "後台操作/業主認知": 5, "優惠活動爭議": 18, "充值問題": 2, "帳務對帳": 2, "遊戲上架/串接": 5, "遊戲異常": 1}, "2026-03-13": {"其他": 202, "帳號問題": 28, "後台操作/業主認知": 15, "優惠活動爭議": 24, "遊戲上架/串接": 9, "帳務對帳": 1, "遊戲異常": 1, "充值問題": 4}, "2026-03-14": {"帳號問題": 5, "其他": 69, "後台操作/業主認知": 6, "遊戲上架/串接": 2, "優惠活動爭議": 3, "遊戲異常": 3}, "2026-03-15": {"帳號問題": 1, "其他": 1}, "2026-03-16": {"帳號問題": 9, "優惠活動爭議": 21, "其他": 123, "充值問題": 1, "遊戲異常": 1, "後台操作/業主認知": 8, "遊戲上架/串接": 4}, "2026-03-17": {"其他": 152, "帳號問題": 14, "後台操作/業主認知": 16, "遊戲上架/串接": 14, "優惠活動爭議": 17, "充值問題": 2, "帳務對帳": 3, "遊戲異常": 1}, "2026-03-18": {"其他": 129, "後台操作/業主認知": 18, "優惠活動爭議": 15, "帳號問題": 14, "充值問題": 1, "帳務對帳": 5, "遊戲異常": 1, "遊戲上架/串接": 3}, "2026-03-19": {"其他": 196, "後台操作/業主認知": 18, "帳號問題": 18, "遊戲異常": 2, "遊戲上架/串接": 14, "帳務對帳": 1, "優惠活動爭議": 15, "充值問題": 1}, "2026-03-20": {"其他": 103, "帳號問題": 16, "優惠活動爭議": 18, "後台操作/業主認知": 5, "充值問題": 4, "遊戲異常": 1, "遊戲上架/串接": 1}, "2026-03-21": {"帳號問題": 2, "其他": 98, "優惠活動爭議": 6, "後台操作/業主認知": 1, "遊戲上架/串接": 1}, "2026-03-22": {"帳號問題": 2, "其他": 11, "充值問題": 1, "後台操作/業主認知": 2, "優惠活動爭議": 1}, "2026-03-23": {"後台操作/業主認知": 8, "其他": 121, "帳號問題": 6, "充值問題": 2, "優惠活動爭議": 8, "遊戲上架/串接": 6}, "2026-03-24": {"其他": 92, "後台操作/業主認知": 11, "帳號問題": 5, "遊戲上架/串接": 4, "優惠活動爭議": 6, "充值問題": 2}, "2026-03-25": {"帳號問題": 6, "後台操作/業主認知": 7, "其他": 111, "優惠活動爭議": 18, "遊戲上架/串接": 15, "帳務對帳": 1, "充值問題": 3}, "2026-03-26": {"其他": 141, "帳號問題": 13, "後台操作/業主認知": 6, "優惠活動爭議": 10, "遊戲異常": 1, "遊戲上架/串接": 16, "充值問題": 2}, "2026-03-27": {"帳號問題": 8, "遊戲異常": 2, "遊戲上架/串接": 14, "其他": 114, "後台操作/業主認知": 1, "優惠活動爭議": 4, "充值問題": 1}, "2026-03-28": {"帳號問題": 4, "其他": 39, "優惠活動爭議": 3, "充值問題": 2}, "2026-03-29": {"帳號問題": 19, "其他": 61, "充值問題": 3, "遊戲異常": 1, "後台操作/業主認知": 1, "優惠活動爭議": 1}, "2026-03-30": {"充值問題": 8, "其他": 131, "遊戲上架/串接": 8, "帳號問題": 6, "遊戲異常": 1, "後台操作/業主認知": 11, "優惠活動爭議": 15}, "2026-03-31": {"帳務對帳": 2, "其他": 144, "優惠活動爭議": 4, "遊戲上架/串接": 7, "帳號問題": 5, "遊戲異常": 1, "充值問題": 2, "後台操作/業主認知": 2}, "2026-04-01": {"其他": 164, "後台操作/業主認知": 5, "優惠活動爭議": 16, "帳號問題": 9, "充值問題": 4, "遊戲上架/串接": 9}, "2026-04-02": {"優惠活動爭議": 24, "其他": 138, "帳號問題": 26, "遊戲上架/串接": 11, "後台操作/業主認知": 7, "遊戲異常": 1, "充值問題": 2}, "2026-04-03": {"其他": 111, "帳號問題": 9, "優惠活動爭議": 17, "遊戲異常": 2, "遊戲上架/串接": 4, "充值問題": 3, "後台操作/業主認知": 1}, "2026-04-04": {"帳號問題": 3, "其他": 45, "遊戲異常": 1, "優惠活動爭議": 2, "帳務對帳": 2, "遊戲上架/串接": 2}, "2026-04-05": {"充值問題": 3, "其他": 35, "優惠活動爭議": 1, "後台操作/業主認知": 2, "帳號問題": 1}, "2026-04-06": {"帳號問題": 2, "其他": 54, "帳務對帳": 3, "遊戲上架/串接": 1, "遊戲異常": 1, "優惠活動爭議": 1}, "2026-04-07": {"後台操作/業主認知": 5, "其他": 152, "優惠活動爭議": 15, "帳號問題": 5, "遊戲上架/串接": 16, "帳務對帳": 2}, "2026-04-08": {"其他": 203, "後台操作/業主認知": 27, "帳務對帳": 6, "帳號問題": 17, "優惠活動爭議": 9, "充值問題": 9, "遊戲上架/串接": 2, "遊戲異常": 3}, "2026-04-09": {"帳號問題": 13, "其他": 150, "優惠活動爭議": 10, "後台操作/業主認知": 7, "充值問題": 5, "帳務對帳": 3, "遊戲上架/串接": 5}, "2026-04-10": {"其他": 139, "帳號問題": 15, "優惠活動爭議": 2, "遊戲上架/串接": 5, "充值問題": 2, "後台操作/業主認知": 1}, "2026-04-11": {"其他": 45, "帳務對帳": 1, "後台操作/業主認知": 3, "帳號問題": 1, "遊戲上架/串接": 4, "優惠活動爭議": 1}, "2026-04-12": {"帳號問題": 5, "其他": 42, "優惠活動爭議": 4, "遊戲上架/串接": 4, "遊戲異常": 6, "充值問題": 1, "帳務對帳": 1, "後台操作/業主認知": 2}, "2026-04-13": {"帳號問題": 1}};
+const LINE_SEV = {"P2": 4089, "P1": 182, "P0": 42};
 
-const SEVERITY = { "P2": 5336, "P1": 270, "P0": 446 };
+const CREDIT_CATS = {"帳務對帳": 119, "帳號問題": 110, "後台操作/業主認知": 96, "遊戲異常": 73, "遊戲上架/串接": 52, "充值問題": 10, "優惠活動爭議": 9};
+const CREDIT_CATS_ALL = {"其他": 1807, "帳務對帳": 119, "帳號問題": 110, "後台操作/業主認知": 96, "遊戲異常": 73, "遊戲上架/串接": 52, "充值問題": 10, "優惠活動爭議": 9};
+const CREDIT_STATIONS = {"信用版_QA": 444, "信用版_FT": 262};
+const CREDIT_DAILY = {"2026-01-01": {"後台操作/業主認知": 1, "其他": 2}, "2026-01-02": {"帳號問題": 1, "其他": 19, "後台操作/業主認知": 5, "充值問題": 1, "帳務對帳": 1, "遊戲異常": 4}, "2026-01-04": {"後台操作/業主認知": 1, "其他": 11}, "2026-01-05": {"帳務對帳": 1, "其他": 21, "遊戲上架/串接": 1}, "2026-01-06": {"其他": 11, "遊戲異常": 1, "後台操作/業主認知": 1}, "2026-01-07": {"其他": 2}, "2026-01-09": {"其他": 2, "遊戲上架/串接": 1}, "2026-01-10": {"遊戲上架/串接": 2, "其他": 48, "帳務對帳": 9, "優惠活動爭議": 3, "帳號問題": 1, "後台操作/業主認知": 1}, "2026-01-11": {"其他": 21, "遊戲異常": 1, "帳號問題": 1}, "2026-01-12": {"其他": 25, "遊戲異常": 2, "帳務對帳": 3}, "2026-01-13": {"後台操作/業主認知": 1, "其他": 11, "帳號問題": 2, "帳務對帳": 3}, "2026-01-14": {"其他": 13, "帳號問題": 1}, "2026-01-15": {"其他": 2, "帳務對帳": 1}, "2026-01-16": {"其他": 10, "帳務對帳": 1}, "2026-01-17": {"帳號問題": 1, "其他": 28, "優惠活動爭議": 1, "遊戲上架/串接": 1, "帳務對帳": 1}, "2026-01-18": {"其他": 7, "帳務對帳": 2, "遊戲上架/串接": 1}, "2026-01-19": {"帳務對帳": 1, "其他": 7, "遊戲上架/串接": 1}, "2026-01-20": {"帳務對帳": 4, "其他": 24, "後台操作/業主認知": 4, "優惠活動爭議": 1, "帳號問題": 1}, "2026-01-21": {"其他": 104, "遊戲上架/串接": 1, "帳號問題": 3, "後台操作/業主認知": 5, "帳務對帳": 4, "遊戲異常": 2}, "2026-01-22": {"其他": 96, "遊戲異常": 6, "後台操作/業主認知": 3, "帳號問題": 11, "遊戲上架/串接": 2}, "2026-01-23": {"其他": 50, "遊戲異常": 6, "帳務對帳": 1, "帳號問題": 5}, "2026-01-24": {"遊戲異常": 11, "其他": 61, "帳號問題": 7, "遊戲上架/串接": 1, "帳務對帳": 6, "後台操作/業主認知": 1}, "2026-01-25": {"帳務對帳": 9, "其他": 60, "後台操作/業主認知": 5, "帳號問題": 4, "遊戲異常": 1}, "2026-01-26": {"遊戲上架/串接": 4, "其他": 141, "後台操作/業主認知": 15, "帳號問題": 6, "充值問題": 2, "帳務對帳": 6, "遊戲異常": 3}, "2026-01-27": {"其他": 99, "後台操作/業主認知": 7, "帳號問題": 4, "遊戲上架/串接": 3, "充值問題": 1, "帳務對帳": 4}, "2026-01-28": {"其他": 51, "遊戲上架/串接": 2, "遊戲異常": 2, "帳號問題": 2, "帳務對帳": 7}, "2026-01-29": {"其他": 31, "遊戲上架/串接": 3, "後台操作/業主認知": 1, "帳號問題": 7, "遊戲異常": 1, "帳務對帳": 1}, "2026-01-30": {"其他": 6, "遊戲上架/串接": 1, "帳務對帳": 5}, "2026-01-31": {"帳號問題": 2, "其他": 12}, "2026-02-01": {"帳號問題": 3, "其他": 20, "帳務對帳": 1, "遊戲異常": 1}, "2026-02-02": {"其他": 44, "帳務對帳": 4, "遊戲異常": 1, "帳號問題": 1, "後台操作/業主認知": 1}, "2026-02-03": {"其他": 18, "後台操作/業主認知": 1, "遊戲異常": 1}, "2026-02-04": {"其他": 19, "帳務對帳": 1}, "2026-02-05": {"遊戲上架/串接": 1, "其他": 6}, "2026-02-06": {"其他": 12}, "2026-02-07": {"帳號問題": 2, "其他": 3}, "2026-02-08": {"其他": 24, "帳號問題": 3, "帳務對帳": 1, "遊戲異常": 1}, "2026-02-09": {"帳號問題": 2, "其他": 40, "遊戲異常": 3, "帳務對帳": 4, "後台操作/業主認知": 3, "充值問題": 1}, "2026-02-10": {"其他": 6, "遊戲異常": 1, "帳號問題": 2}, "2026-02-11": {"其他": 45, "帳號問題": 4, "帳務對帳": 2, "遊戲異常": 6}, "2026-02-12": {"其他": 22, "帳號問題": 3}, "2026-02-13": {"遊戲上架/串接": 2, "帳號問題": 7, "其他": 40, "後台操作/業主認知": 7, "優惠活動爭議": 2}, "2026-02-14": {"其他": 20, "後台操作/業主認知": 1}, "2026-02-15": {"其他": 2}, "2026-02-16": {"其他": 13, "帳務對帳": 2, "後台操作/業主認知": 1}, "2026-02-21": {"帳號問題": 1, "其他": 2}, "2026-02-23": {"其他": 24, "帳號問題": 1, "帳務對帳": 2, "優惠活動爭議": 1}, "2026-02-24": {"其他": 10, "帳務對帳": 1}, "2026-02-25": {"其他": 9, "帳務對帳": 3}, "2026-02-26": {"其他": 31, "帳號問題": 2, "遊戲上架/串接": 5, "後台操作/業主認知": 11}, "2026-02-27": {"其他": 24, "帳務對帳": 4, "後台操作/業主認知": 1, "遊戲上架/串接": 1, "帳號問題": 1, "遊戲異常": 4}, "2026-02-28": {"其他": 3}, "2026-03-01": {"其他": 33, "後台操作/業主認知": 3, "帳號問題": 2, "帳務對帳": 1}, "2026-03-02": {"其他": 16, "後台操作/業主認知": 2, "遊戲上架/串接": 6, "帳務對帳": 1}, "2026-03-03": {"其他": 2}, "2026-03-04": {"其他": 6, "帳號問題": 1}, "2026-03-05": {"其他": 13}, "2026-03-06": {"其他": 10, "後台操作/業主認知": 1, "遊戲異常": 1}, "2026-03-07": {"遊戲異常": 2, "其他": 22}, "2026-03-08": {"其他": 11, "帳務對帳": 1, "帳號問題": 1, "後台操作/業主認知": 1}, "2026-03-09": {"其他": 34, "帳號問題": 3, "帳務對帳": 3, "後台操作/業主認知": 1, "遊戲異常": 1}, "2026-03-10": {"其他": 15, "帳號問題": 2, "後台操作/業主認知": 3, "遊戲上架/串接": 5}, "2026-03-11": {"其他": 10, "帳務對帳": 1}, "2026-03-13": {"其他": 4, "帳號問題": 2}, "2026-03-15": {"其他": 3}, "2026-03-16": {"其他": 2, "帳務對帳": 1}, "2026-03-17": {"其他": 16, "後台操作/業主認知": 1, "充值問題": 1}, "2026-03-18": {"遊戲上架/串接": 2, "其他": 18, "優惠活動爭議": 1}, "2026-03-19": {"其他": 12, "遊戲異常": 1, "帳務對帳": 1}, "2026-03-20": {"遊戲異常": 2, "其他": 4, "帳號問題": 4}, "2026-03-22": {"其他": 21}, "2026-03-23": {"其他": 15, "帳務對帳": 2}, "2026-03-24": {"其他": 13, "遊戲上架/串接": 1, "帳務對帳": 1}, "2026-03-25": {"其他": 5}, "2026-03-26": {"其他": 3, "遊戲異常": 1}, "2026-03-27": {"帳務對帳": 4, "其他": 15, "遊戲異常": 1}, "2026-03-28": {"其他": 3, "遊戲異常": 1}, "2026-03-29": {"帳務對帳": 1}, "2026-03-30": {"帳務對帳": 1, "其他": 7, "遊戲異常": 2, "後台操作/業主認知": 2}, "2026-03-31": {"其他": 6, "帳號問題": 1}, "2026-04-01": {"其他": 25, "遊戲上架/串接": 1, "充值問題": 2, "後台操作/業主認知": 3}, "2026-04-02": {"其他": 14, "充值問題": 1, "帳務對帳": 2, "遊戲異常": 1}, "2026-04-03": {"帳號問題": 1}, "2026-04-04": {"其他": 14, "充值問題": 1, "後台操作/業主認知": 1}, "2026-04-06": {"帳號問題": 1, "其他": 2, "帳務對帳": 1}, "2026-04-07": {"遊戲異常": 1, "其他": 4, "帳務對帳": 1}, "2026-04-08": {"其他": 8}, "2026-04-10": {"後台操作/業主認知": 1, "帳務對帳": 1, "遊戲上架/串接": 4, "其他": 6, "遊戲異常": 1}, "2026-04-11": {"其他": 3, "帳號問題": 1}, "2026-04-13": {"帳務對帳": 1}};
+const CREDIT_SEV = {"P2": 589, "P1": 109, "P0": 8};
+
+const VENDOR_CATS = {"遊戲異常": 64, "遊戲上架/串接": 48, "帳號問題": 39, "帳務對帳": 26, "優惠活動爭議": 12, "充值問題": 8, "後台操作/業主認知": 5};
+const VENDOR_CATS_ALL = {"其他": 787, "遊戲異常": 64, "遊戲上架/串接": 48, "帳號問題": 39, "帳務對帳": 26, "優惠活動爭議": 12, "充值問題": 8, "後台操作/業主認知": 5};
+const VENDOR_STATIONS = {"TP_捕魚": 174, "TG_UGS捕魚": 50, "XG_Super": 46};
+const VENDOR_DAILY = {"2026-01-01": {"其他": 1}, "2026-01-03": {"遊戲上架/串接": 1, "其他": 2}, "2026-01-04": {"其他": 1}, "2026-01-05": {"其他": 3}, "2026-01-07": {"其他": 4}, "2026-01-08": {"遊戲上架/串接": 1, "其他": 9, "遊戲異常": 2, "充值問題": 1, "帳務對帳": 1, "帳號問題": 2}, "2026-01-09": {"遊戲上架/串接": 1, "其他": 2}, "2026-01-12": {"遊戲上架/串接": 2, "其他": 16, "遊戲異常": 1}, "2026-01-14": {"其他": 3}, "2026-01-15": {"遊戲上架/串接": 1}, "2026-01-16": {"其他": 5, "遊戲上架/串接": 1}, "2026-01-19": {"其他": 1}, "2026-01-21": {"其他": 4}, "2026-01-22": {"其他": 3}, "2026-01-26": {"遊戲上架/串接": 1, "其他": 7}, "2026-01-28": {"遊戲上架/串接": 1, "其他": 4}, "2026-01-29": {"遊戲上架/串接": 1, "其他": 2}, "2026-01-30": {"遊戲上架/串接": 1, "其他": 2}, "2026-02-02": {"遊戲上架/串接": 1, "其他": 2}, "2026-02-04": {"遊戲上架/串接": 1, "其他": 2}, "2026-02-05": {"其他": 6, "帳號問題": 1}, "2026-02-06": {"其他": 12, "帳號問題": 1}, "2026-02-07": {"其他": 13, "遊戲上架/串接": 2}, "2026-02-08": {"其他": 4, "遊戲異常": 1}, "2026-02-11": {"遊戲上架/串接": 2, "其他": 7}, "2026-02-12": {"其他": 12, "帳號問題": 2, "遊戲異常": 1}, "2026-02-13": {"其他": 1}, "2026-02-15": {"遊戲上架/串接": 1, "其他": 2}, "2026-02-16": {"其他": 7}, "2026-02-17": {"其他": 4, "遊戲異常": 2, "帳號問題": 1}, "2026-02-18": {"其他": 2, "遊戲異常": 1}, "2026-02-20": {"其他": 3}, "2026-02-21": {"其他": 4}, "2026-02-22": {"其他": 3}, "2026-02-23": {"遊戲上架/串接": 1, "其他": 3}, "2026-02-24": {"其他": 3}, "2026-02-25": {"遊戲上架/串接": 1, "其他": 2}, "2026-02-26": {"帳號問題": 1, "其他": 20, "遊戲異常": 2, "充值問題": 1}, "2026-02-27": {"帳號問題": 2, "其他": 9}, "2026-02-28": {"帳號問題": 3, "其他": 7}, "2026-03-02": {"帳號問題": 4, "其他": 20, "遊戲異常": 1}, "2026-03-03": {"遊戲上架/串接": 1, "其他": 3}, "2026-03-04": {"其他": 4}, "2026-03-05": {"其他": 3}, "2026-03-10": {"其他": 3}, "2026-03-11": {"遊戲上架/串接": 1, "其他": 2}, "2026-03-12": {"其他": 4}, "2026-03-14": {"其他": 3}, "2026-03-16": {"其他": 10, "充值問題": 2}, "2026-03-18": {"其他": 13}, "2026-03-19": {"其他": 16, "遊戲上架/串接": 3}, "2026-03-20": {"其他": 4, "帳號問題": 1}, "2026-03-21": {"帳務對帳": 6, "其他": 50, "遊戲異常": 3, "帳號問題": 3, "優惠活動爭議": 1}, "2026-03-23": {"帳務對帳": 1, "其他": 64, "帳號問題": 5, "後台操作/業主認知": 2, "遊戲異常": 2, "優惠活動爭議": 2, "充值問題": 1, "遊戲上架/串接": 1}, "2026-03-24": {"其他": 10, "遊戲上架/串接": 2, "遊戲異常": 2}, "2026-03-25": {"帳號問題": 2, "其他": 16, "帳務對帳": 2, "優惠活動爭議": 3, "遊戲異常": 1}, "2026-03-27": {"其他": 57, "帳號問題": 3, "遊戲上架/串接": 3, "遊戲異常": 7, "帳務對帳": 1, "充值問題": 1, "優惠活動爭議": 4}, "2026-03-28": {"帳務對帳": 3, "其他": 7}, "2026-03-29": {"其他": 20, "帳務對帳": 1, "遊戲異常": 1}, "2026-03-30": {"遊戲上架/串接": 4, "其他": 53, "遊戲異常": 4}, "2026-03-31": {"優惠活動爭議": 2, "其他": 33, "遊戲上架/串接": 4, "帳務對帳": 1}, "2026-04-01": {"遊戲上架/串接": 2, "其他": 29, "遊戲異常": 12, "帳務對帳": 2, "帳號問題": 2, "充值問題": 1}, "2026-04-02": {"帳號問題": 1, "其他": 8}, "2026-04-05": {"遊戲上架/串接": 1, "其他": 5}, "2026-04-06": {"遊戲上架/串接": 1, "後台操作/業主認知": 1, "其他": 1}, "2026-04-07": {"帳號問題": 1, "其他": 35, "遊戲上架/串接": 2, "帳務對帳": 1, "遊戲異常": 6}, "2026-04-08": {"帳號問題": 4, "其他": 50, "遊戲異常": 9, "遊戲上架/串接": 1, "後台操作/業主認知": 1}, "2026-04-09": {"其他": 47, "遊戲異常": 2, "遊戲上架/串接": 2, "帳務對帳": 6, "充值問題": 1}, "2026-04-10": {"其他": 15, "遊戲異常": 4, "帳務對帳": 1}, "2026-04-11": {"後台操作/業主認知": 1, "其他": 5}};
+const VENDOR_SEV = {"P2": 219, "P1": 45, "P0": 6};
+
+const OUTSOURCE_CATS = {"帳號問題": 210, "遊戲上架/串接": 119, "優惠活動爭議": 116, "遊戲異常": 110, "充值問題": 102, "帳務對帳": 101, "後台操作/業主認知": 100, "提款問題": 34};
+const OUTSOURCE_CATS_ALL = {"其他": 9127, "帳號問題": 210, "遊戲上架/串接": 119, "優惠活動爭議": 116, "遊戲異常": 110, "充值問題": 102, "帳務對帳": 101, "後台操作/業主認知": 100, "提款問題": 34};
+const OUTSOURCE_STATIONS = {"N8_印度站": 772, "FF_外包技術": 366, "巨星_技術對接": 69, "N8_S級告警": 63, "巨星_資方": 3};
+const OUTSOURCE_DAILY = {"2026-01-01": {"其他": 59, "後台操作/業主認知": 1, "提款問題": 3, "遊戲異常": 1, "帳務對帳": 1, "帳號問題": 1, "遊戲上架/串接": 2}, "2026-01-02": {"其他": 98, "帳號問題": 1, "優惠活動爭議": 4, "充值問題": 9, "遊戲異常": 1, "遊戲上架/串接": 3}, "2026-01-03": {"其他": 88, "帳號問題": 1, "遊戲異常": 2, "後台操作/業主認知": 1}, "2026-01-04": {"其他": 85, "帳務對帳": 2, "帳號問題": 3}, "2026-01-05": {"其他": 116, "後台操作/業主認知": 3, "帳號問題": 3, "充值問題": 2, "優惠活動爭議": 3, "帳務對帳": 1}, "2026-01-06": {"其他": 98, "遊戲上架/串接": 1, "優惠活動爭議": 2, "遊戲異常": 1, "後台操作/業主認知": 2, "帳號問題": 2, "充值問題": 3}, "2026-01-07": {"其他": 76, "帳務對帳": 5}, "2026-01-08": {"其他": 92, "帳號問題": 4, "後台操作/業主認知": 1, "帳務對帳": 2, "遊戲上架/串接": 2, "遊戲異常": 1}, "2026-01-09": {"其他": 72, "後台操作/業主認知": 3, "優惠活動爭議": 1, "帳號問題": 1, "遊戲異常": 2, "帳務對帳": 1}, "2026-01-10": {"其他": 102, "遊戲異常": 1, "充值問題": 2, "帳號問題": 1, "後台操作/業主認知": 1, "遊戲上架/串接": 1}, "2026-01-11": {"其他": 81}, "2026-01-12": {"其他": 95, "後台操作/業主認知": 1, "帳號問題": 1, "遊戲異常": 2}, "2026-01-13": {"後台操作/業主認知": 1, "其他": 120, "遊戲異常": 3, "充值問題": 1}, "2026-01-14": {"遊戲上架/串接": 10, "其他": 136, "帳號問題": 4, "充值問題": 1, "後台操作/業主認知": 1, "遊戲異常": 1, "提款問題": 2, "優惠活動爭議": 1, "帳務對帳": 1}, "2026-01-15": {"帳號問題": 4, "其他": 98, "遊戲異常": 1, "提款問題": 3, "充值問題": 2, "後台操作/業主認知": 1}, "2026-01-16": {"其他": 100, "充值問題": 1, "後台操作/業主認知": 1, "遊戲上架/串接": 2, "帳務對帳": 3}, "2026-01-17": {"帳號問題": 3, "其他": 57, "後台操作/業主認知": 1, "帳務對帳": 1, "充值問題": 1, "遊戲異常": 1}, "2026-01-18": {"其他": 87, "充值問題": 2, "遊戲異常": 6, "遊戲上架/串接": 2}, "2026-01-19": {"其他": 49, "遊戲上架/串接": 1, "充值問題": 1, "帳號問題": 3, "後台操作/業主認知": 1, "優惠活動爭議": 1, "遊戲異常": 1}, "2026-01-20": {"其他": 68, "帳務對帳": 1, "後台操作/業主認知": 1, "遊戲上架/串接": 1}, "2026-01-21": {"後台操作/業主認知": 5, "其他": 53, "遊戲上架/串接": 1, "帳號問題": 1, "帳務對帳": 2, "優惠活動爭議": 1}, "2026-01-22": {"其他": 36, "帳號問題": 2, "充值問題": 1}, "2026-01-23": {"其他": 53, "優惠活動爭議": 1, "帳務對帳": 1}, "2026-01-24": {"後台操作/業主認知": 1, "其他": 67, "遊戲上架/串接": 1, "帳務對帳": 4}, "2026-01-25": {"後台操作/業主認知": 1, "其他": 32, "優惠活動爭議": 1}, "2026-01-26": {"充值問題": 2, "其他": 39, "後台操作/業主認知": 1, "遊戲異常": 1, "優惠活動爭議": 2}, "2026-01-27": {"遊戲上架/串接": 2, "其他": 65, "優惠活動爭議": 2, "帳號問題": 1}, "2026-01-28": {"其他": 77, "遊戲上架/串接": 2, "帳務對帳": 3, "充值問題": 3, "後台操作/業主認知": 1, "優惠活動爭議": 1}, "2026-01-29": {"其他": 77, "後台操作/業主認知": 3, "帳號問題": 3, "遊戲上架/串接": 3, "提款問題": 1, "帳務對帳": 1}, "2026-01-30": {"其他": 85, "遊戲異常": 1, "優惠活動爭議": 1, "帳務對帳": 4, "帳號問題": 1, "遊戲上架/串接": 1}, "2026-01-31": {"其他": 80, "後台操作/業主認知": 1, "帳號問題": 1, "充值問題": 6, "遊戲上架/串接": 1, "帳務對帳": 1, "提款問題": 1, "遊戲異常": 1}, "2026-02-01": {"遊戲異常": 2, "其他": 117, "帳號問題": 2, "充值問題": 2, "優惠活動爭議": 3, "後台操作/業主認知": 1}, "2026-02-02": {"帳號問題": 4, "其他": 90, "充值問題": 2, "帳務對帳": 3, "遊戲異常": 1, "優惠活動爭議": 1}, "2026-02-03": {"其他": 64, "帳務對帳": 3, "遊戲上架/串接": 1, "充值問題": 1, "帳號問題": 2, "遊戲異常": 1}, "2026-02-04": {"其他": 104, "帳號問題": 2, "充值問題": 3, "優惠活動爭議": 6, "帳務對帳": 6, "遊戲異常": 1, "後台操作/業主認知": 1}, "2026-02-05": {"其他": 69, "帳號問題": 1, "優惠活動爭議": 5, "帳務對帳": 2}, "2026-02-06": {"其他": 93, "遊戲上架/串接": 4, "遊戲異常": 3, "帳務對帳": 1, "優惠活動爭議": 4, "後台操作/業主認知": 1, "帳號問題": 1, "提款問題": 1, "充值問題": 1}, "2026-02-07": {"其他": 104, "提款問題": 4, "優惠活動爭議": 1, "充值問題": 3}, "2026-02-08": {"其他": 48, "優惠活動爭議": 2, "帳務對帳": 1, "遊戲異常": 1}, "2026-02-09": {"其他": 123, "帳號問題": 7, "遊戲異常": 4, "後台操作/業主認知": 7, "優惠活動爭議": 1, "充值問題": 1}, "2026-02-10": {"其他": 120, "優惠活動爭議": 2, "提款問題": 1, "帳號問題": 6, "遊戲異常": 2, "帳務對帳": 2, "遊戲上架/串接": 3}, "2026-02-11": {"帳號問題": 3, "其他": 130, "後台操作/業主認知": 1, "遊戲上架/串接": 2, "優惠活動爭議": 2, "帳務對帳": 1, "充值問題": 1}, "2026-02-12": {"其他": 54, "優惠活動爭議": 3, "帳號問題": 1}, "2026-02-13": {"帳號問題": 4, "其他": 73, "遊戲上架/串接": 6, "後台操作/業主認知": 1, "優惠活動爭議": 1, "帳務對帳": 1}, "2026-02-14": {"其他": 108, "遊戲異常": 3, "帳號問題": 3, "優惠活動爭議": 1, "帳務對帳": 1, "遊戲上架/串接": 3}, "2026-02-15": {"其他": 75, "遊戲異常": 4, "後台操作/業主認知": 3, "帳務對帳": 3, "充值問題": 1, "遊戲上架/串接": 2}, "2026-02-16": {"其他": 73, "帳務對帳": 1, "遊戲上架/串接": 3}, "2026-02-17": {"帳號問題": 4, "其他": 45, "遊戲異常": 2}, "2026-02-18": {"其他": 53, "後台操作/業主認知": 1, "帳號問題": 2, "遊戲異常": 2}, "2026-02-19": {"其他": 50, "優惠活動爭議": 1, "帳號問題": 1, "遊戲異常": 1, "遊戲上架/串接": 1}, "2026-02-20": {"充值問題": 3, "其他": 103, "遊戲異常": 1, "遊戲上架/串接": 1, "帳號問題": 3, "優惠活動爭議": 1}, "2026-02-21": {"其他": 60, "優惠活動爭議": 1, "帳務對帳": 2, "提款問題": 2, "充值問題": 1, "後台操作/業主認知": 1}, "2026-02-22": {"其他": 38, "帳務對帳": 1, "優惠活動爭議": 1, "帳號問題": 1}, "2026-02-23": {"其他": 63, "帳號問題": 1, "後台操作/業主認知": 1, "優惠活動爭議": 1, "遊戲異常": 2, "帳務對帳": 1}, "2026-02-24": {"遊戲上架/串接": 3, "其他": 85, "充值問題": 1, "後台操作/業主認知": 3, "遊戲異常": 2}, "2026-02-25": {"其他": 42}, "2026-02-26": {"後台操作/業主認知": 6, "其他": 85, "充值問題": 1, "遊戲異常": 1, "帳務對帳": 1, "優惠活動爭議": 1, "遊戲上架/串接": 1}, "2026-02-27": {"遊戲上架/串接": 1, "其他": 41, "充值問題": 1, "遊戲異常": 1, "後台操作/業主認知": 1}, "2026-02-28": {"其他": 62, "後台操作/業主認知": 1, "帳號問題": 2}, "2026-03-01": {"帳號問題": 3, "其他": 102, "充值問題": 1, "優惠活動爭議": 3, "遊戲異常": 2}, "2026-03-02": {"後台操作/業主認知": 1, "帳號問題": 8, "其他": 99, "優惠活動爭議": 1, "遊戲異常": 1, "遊戲上架/串接": 2, "帳務對帳": 1}, "2026-03-03": {"遊戲上架/串接": 3, "其他": 52, "優惠活動爭議": 2, "後台操作/業主認知": 2, "帳號問題": 1}, "2026-03-04": {"後台操作/業主認知": 5, "遊戲異常": 1, "其他": 62, "優惠活動爭議": 4, "帳號問題": 1}, "2026-03-05": {"其他": 147, "帳號問題": 2, "遊戲異常": 2}, "2026-03-06": {"充值問題": 2, "其他": 135, "後台操作/業主認知": 1, "遊戲異常": 1, "優惠活動爭議": 5, "遊戲上架/串接": 2, "帳號問題": 1}, "2026-03-07": {"其他": 76, "帳號問題": 1, "優惠活動爭議": 5}, "2026-03-08": {"其他": 104, "充值問題": 7, "後台操作/業主認知": 2, "優惠活動爭議": 4, "遊戲異常": 1, "帳號問題": 1}, "2026-03-09": {"優惠活動爭議": 5, "其他": 89, "遊戲異常": 1, "充值問題": 1, "後台操作/業主認知": 1, "帳務對帳": 1}, "2026-03-10": {"其他": 137, "帳務對帳": 1, "遊戲異常": 1, "帳號問題": 4}, "2026-03-11": {"其他": 94, "遊戲上架/串接": 2, "優惠活動爭議": 5, "帳號問題": 1, "充值問題": 5, "帳務對帳": 1}, "2026-03-12": {"其他": 177, "後台操作/業主認知": 1, "帳號問題": 1, "遊戲異常": 4, "帳務對帳": 2, "充值問題": 1, "遊戲上架/串接": 1}, "2026-03-13": {"充值問題": 11, "其他": 393, "提款問題": 6, "後台操作/業主認知": 4, "遊戲異常": 5, "帳號問題": 8, "優惠活動爭議": 2, "遊戲上架/串接": 8}, "2026-03-14": {"其他": 51, "帳號問題": 4, "遊戲異常": 1, "提款問題": 4}, "2026-03-15": {"其他": 64, "帳務對帳": 1, "遊戲異常": 3, "提款問題": 4, "帳號問題": 1}, "2026-03-16": {"其他": 108, "後台操作/業主認知": 2, "遊戲上架/串接": 1, "充值問題": 1, "提款問題": 1, "優惠活動爭議": 1}, "2026-03-17": {"其他": 53, "遊戲上架/串接": 2, "遊戲異常": 3, "充值問題": 1}, "2026-03-18": {"遊戲異常": 1, "其他": 107, "遊戲上架/串接": 4, "充值問題": 4, "帳號問題": 3, "帳務對帳": 1, "後台操作/業主認知": 1, "優惠活動爭議": 1}, "2026-03-19": {"其他": 108, "帳務對帳": 1, "帳號問題": 2, "遊戲上架/串接": 2}, "2026-03-20": {"帳號問題": 6, "其他": 114, "優惠活動爭議": 4, "遊戲上架/串接": 2, "遊戲異常": 3}, "2026-03-21": {"帳號問題": 9, "其他": 47, "優惠活動爭議": 3, "遊戲上架/串接": 3}, "2026-03-22": {"其他": 68, "後台操作/業主認知": 2, "優惠活動爭議": 1, "帳務對帳": 1, "帳號問題": 1}, "2026-03-23": {"帳號問題": 2, "其他": 29, "優惠活動爭議": 1, "遊戲上架/串接": 1}, "2026-03-24": {"後台操作/業主認知": 1, "其他": 69, "優惠活動爭議": 1, "帳務對帳": 1, "帳號問題": 1, "遊戲上架/串接": 2}, "2026-03-25": {"其他": 63, "帳號問題": 4, "遊戲上架/串接": 2}, "2026-03-26": {"其他": 57, "後台操作/業主認知": 2, "充值問題": 2, "遊戲異常": 3, "遊戲上架/串接": 1, "優惠活動爭議": 1}, "2026-03-27": {"帳號問題": 3, "其他": 57, "帳務對帳": 1, "遊戲異常": 1}, "2026-03-28": {"其他": 58, "後台操作/業主認知": 1, "遊戲上架/串接": 4, "帳務對帳": 1, "遊戲異常": 1}, "2026-03-29": {"其他": 131, "遊戲異常": 2, "帳號問題": 5, "後台操作/業主認知": 5, "遊戲上架/串接": 1, "帳務對帳": 1}, "2026-03-30": {"其他": 124, "帳號問題": 2, "充值問題": 3, "後台操作/業主認知": 2, "優惠活動爭議": 1}, "2026-03-31": {"其他": 95, "帳號問題": 2, "遊戲異常": 1}, "2026-04-01": {"其他": 122, "帳號問題": 7, "優惠活動爭議": 1}, "2026-04-02": {"帳號問題": 8, "其他": 149, "帳務對帳": 2, "遊戲上架/串接": 4, "後台操作/業主認知": 1}, "2026-04-03": {"其他": 85, "帳務對帳": 1, "遊戲上架/串接": 1, "帳號問題": 1}, "2026-04-04": {"其他": 119, "帳務對帳": 7, "遊戲異常": 1, "帳號問題": 1, "提款問題": 1, "充值問題": 1}, "2026-04-05": {"其他": 152, "帳號問題": 3, "後台操作/業主認知": 1, "帳務對帳": 3}, "2026-04-06": {"其他": 95, "遊戲上架/串接": 1}, "2026-04-07": {"其他": 156, "帳務對帳": 2, "遊戲異常": 1}, "2026-04-08": {"其他": 73, "遊戲異常": 1, "充值問題": 2, "帳號問題": 2, "優惠活動爭議": 1, "帳務對帳": 2}, "2026-04-09": {"其他": 104, "遊戲異常": 2, "帳務對帳": 2, "優惠活動爭議": 2, "帳號問題": 3}, "2026-04-10": {"帳號問題": 5, "其他": 94, "後台操作/業主認知": 1, "帳務對帳": 1, "遊戲上架/串接": 1}, "2026-04-11": {"其他": 151, "後台操作/業主認知": 1, "帳號問題": 1, "優惠活動爭議": 1, "帳務對帳": 2, "遊戲異常": 3}, "2026-04-12": {"遊戲異常": 3, "其他": 108, "遊戲上架/串接": 2, "帳號問題": 11, "後台操作/業主認知": 1, "優惠活動爭議": 2, "充值問題": 1}, "2026-04-13": {"其他": 36, "帳務對帳": 1}};
+const OUTSOURCE_SEV = {"P2": 1026, "P1": 231, "P0": 16};
+
+const PL_COMPARE = {"LINE站": {"total": 17116, "valid": 14815, "complaints": 4313, "stations": 14, "groups": 14, "topCats": {"帳號問題": 1120, "優惠活動爭議": 843, "遊戲上架/串接": 578}}, "信用版": {"total": 2558, "valid": 2276, "complaints": 706, "stations": 2, "groups": 2, "topCats": {"帳務對帳": 119, "帳號問題": 110, "後台操作/業主認知": 96}}, "遊戲商": {"total": 1034, "valid": 989, "complaints": 270, "stations": 3, "groups": 3, "topCats": {"遊戲異常": 64, "遊戲上架/串接": 48, "帳號問題": 39}}, "外包": {"total": 11585, "valid": 10019, "complaints": 1273, "stations": 5, "groups": 5, "topCats": {"帳號問題": 210, "遊戲上架/串接": 119, "優惠活動爭議": 116}}};
+
+
+// Generic chart builders
+function buildCatPie(canvasId, catsObj) {
+    var names = Object.keys(catsObj);
+    var vals = Object.values(catsObj);
+    new Chart(document.getElementById(canvasId), {
+        type: 'doughnut',
+        data: { labels: names, datasets: [{ data: vals, backgroundColor: COLORS.slice(0, names.length), borderColor: '#1a1a2e', borderWidth: 2 }] },
+        options: {
+            responsive: true, maintainAspectRatio: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, font: { size: 11 } } },
+                tooltip: { callbacks: { label: function(ctx) { var t = ctx.dataset.data.reduce((a,b)=>a+b,0); return ctx.label+': '+ctx.parsed+' ('+(ctx.parsed/t*100).toFixed(1)+'%)'; } } }
+            }
+        }
+    });
+}
+
+function buildCatBar(canvasId, catsAllObj) {
+    new Chart(document.getElementById(canvasId), {
+        type: 'bar',
+        data: { labels: Object.keys(catsAllObj), datasets: [{ label: '件數', data: Object.values(catsAllObj), backgroundColor: COLORS.concat(COLORS).slice(0, 9).map(c => c + 'CC'), borderWidth: 0 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+    });
+}
+
+function buildStationBar(canvasId, stationsObj) {
+    new Chart(document.getElementById(canvasId), {
+        type: 'bar',
+        data: { labels: Object.keys(stationsObj), datasets: [{ label: '客訴數', data: Object.values(stationsObj), backgroundColor: COLORS.concat(COLORS).slice(0, Object.keys(stationsObj).length).map(c => c+'CC'), borderWidth: 0 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+    });
+}
+
+function buildTrend(canvasId, dailyObj, days) {
+    var end = new Date('2026-04-13'), dates = [];
+    for (var i = days-1; i >= 0; i--) { var d = new Date(end); d.setDate(d.getDate()-i); dates.push(d.toISOString().split('T')[0]); }
+    var allCats = {};
+    Object.values(dailyObj).forEach(function(dayData) { Object.keys(dayData).forEach(function(c) { if(c !== '其他') allCats[c] = true; }); });
+    var catNames = Object.keys(allCats);
+    new Chart(document.getElementById(canvasId), {
+        type: 'line',
+        data: {
+            labels: dates.map(d => d.substring(5)),
+            datasets: catNames.map((cat, idx) => ({
+                label: cat,
+                data: dates.map(d => (dailyObj[d] && dailyObj[d][cat]) || 0),
+                borderColor: COLORS[idx % COLORS.length],
+                backgroundColor: 'transparent',
+                borderWidth: 1.5,
+                pointRadius: days > 60 ? 0 : 2,
+                tension: 0.3
+            }))
+        },
+        options: {
+            responsive: true, maintainAspectRatio: true,
+            plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } },
+            scales: { y: { beginAtZero: true }, x: { ticks: { maxTicksLimit: days > 60 ? 12 : 10, font: { size: 9 } } } }
+        }
+    });
+}
+
+function buildSevPie(canvasId, sevObj) {
+    new Chart(document.getElementById(canvasId), {
+        type: 'doughnut',
+        data: { labels: ['P2 中等','P1 高','P0 緊急'], datasets: [{ data: [sevObj.P2||0, sevObj.P1||0, sevObj.P0||0], backgroundColor: ['#FFB300','#ff8800','#ff4444'], borderColor: '#1a1a2e', borderWidth: 2 }] },
+        options: {
+            responsive: true, maintainAspectRatio: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true } },
+                tooltip: { callbacks: { label: function(ctx) { var t = ctx.dataset.data.reduce((a,b)=>a+b,0); return ctx.label+': '+ctx.parsed+' ('+(ctx.parsed/t*100).toFixed(1)+'%)'; } } }
+            }
+        }
+    });
+}
+
+// === 整體總覽 charts ===
+buildCatPie('overallCatPie', OVERALL_CATS);
+buildCatBar('overallCatBar', OVERALL_CATS_ALL);
+buildStationBar('overallStationBar', OVERALL_STATIONS);
+buildTrend('overallTrend30', OVERALL_DAILY, 30);
+buildTrend('overallTrend90', OVERALL_DAILY, 90);
+buildSevPie('overallSevPie', OVERALL_SEV);
+
+// === LINE站 charts ===
+buildCatPie('lineCatPie', LINE_CATS);
+buildCatBar('lineCatBar', LINE_CATS_ALL);
+buildStationBar('lineStationBar', LINE_STATIONS);
+buildTrend('lineTrend30', LINE_DAILY, 30);
+buildTrend('lineTrend90', LINE_DAILY, 90);
+buildSevPie('lineSevPie', LINE_SEV);
+
+// === 信用版 charts ===
+buildCatPie('creditCatPie', CREDIT_CATS);
+buildCatBar('creditCatBar', CREDIT_CATS_ALL);
+buildStationBar('creditStationBar', CREDIT_STATIONS);
+buildTrend('creditTrend30', CREDIT_DAILY, 30);
+buildTrend('creditTrend90', CREDIT_DAILY, 90);
+buildSevPie('creditSevPie', CREDIT_SEV);
+
+// === 遊戲商 charts ===
+buildCatPie('vendorCatPie', VENDOR_CATS);
+buildCatBar('vendorCatBar', VENDOR_CATS_ALL);
+buildStationBar('vendorStationBar', VENDOR_STATIONS);
+buildTrend('vendorTrend30', VENDOR_DAILY, 30);
+buildTrend('vendorTrend90', VENDOR_DAILY, 90);
+buildSevPie('vendorSevPie', VENDOR_SEV);
+
+// === 外包 charts ===
+buildCatPie('outsourceCatPie', OUTSOURCE_CATS);
+buildCatBar('outsourceCatBar', OUTSOURCE_CATS_ALL);
+buildStationBar('outsourceStationBar', OUTSOURCE_STATIONS);
+buildTrend('outsourceTrend30', OUTSOURCE_DAILY, 30);
+buildTrend('outsourceTrend90', OUTSOURCE_DAILY, 90);
+buildSevPie('outsourceSevPie', OUTSOURCE_SEV);
+
+
+// === Product Line Comparison Charts ===
+var plNames = Object.keys(PL_COMPARE);
+var plColors = ['#00B4D8','#00D99F','#9D4EDD','#FB5607'];
+
+new Chart(document.getElementById('plCompareBar'), {
+    type: 'bar',
+    data: { labels: plNames, datasets: [{ label: '客訴數', data: plNames.map(n => PL_COMPARE[n].complaints), backgroundColor: plColors.map(c => c+'CC'), borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+
+new Chart(document.getElementById('plCompareRate'), {
+    type: 'bar',
+    data: { labels: plNames, datasets: [{ label: '客訴率 (%)', data: plNames.map(n => (PL_COMPARE[n].complaints/PL_COMPARE[n].total*100).toFixed(1)), backgroundColor: plColors.map(c => c+'CC'), borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: function(v) { return v+'%'; } } } } }
+});
+
+new Chart(document.getElementById('plComparePie'), {
+    type: 'doughnut',
+    data: { labels: plNames, datasets: [{ data: plNames.map(n => PL_COMPARE[n].total), backgroundColor: plColors, borderColor: '#1a1a2e', borderWidth: 2 }] },
+    options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true } },
+            tooltip: { callbacks: { label: function(ctx) { var t = ctx.dataset.data.reduce((a,b)=>a+b,0); return ctx.label+': '+ctx.parsed.toLocaleString()+' ('+(ctx.parsed/t*100).toFixed(1)+'%)'; } } }
+        }
+    }
+});
+
+// Top 3 categories per PL (grouped bar)
+var topCatNames = new Set();
+plNames.forEach(function(n) { Object.keys(PL_COMPARE[n].topCats).forEach(function(c) { topCatNames.add(c); }); });
+topCatNames = Array.from(topCatNames);
+
+new Chart(document.getElementById('plCompareTopCats'), {
+    type: 'bar',
+    data: {
+        labels: topCatNames,
+        datasets: plNames.map(function(n, i) {
+            return { label: n, data: topCatNames.map(function(c) { return PL_COMPARE[n].topCats[c] || 0; }), backgroundColor: plColors[i]+'CC', borderWidth: 0 };
+        })
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+
 
 const VIOLATIONS = [
     {type:"禁用詞「一定」",station:"L13_第一名",from:"Dan",date:"2026-01-16",text:"可以玩這活動的玩家一定是有儲值的"},
@@ -976,9 +1103,17 @@ const VIOLATIONS = [
     {type:"時間承諾",station:"JIN_錢老爺",from:"Gao Firball741",date:"2026-03-19",text:"已完成 1分鐘後刷新生效"}
 ];
 
-const DAILY = {"2026-01-01": {"其他": 144, "帳號問題": 14, "後台操作/業主認知": 2, "優惠活動爭議": 5, "帳務對帳": 4, "提款問題": 3, "遊戲異常": 1, "遊戲上架/串接": 2}, "2026-01-02": {"後台操作/業主認知": 11, "其他": 231, "帳號問題": 4, "充值問題": 11, "帳務對帳": 2, "遊戲異常": 5, "優惠活動爭議": 10, "遊戲上架/串接": 11}, "2026-01-03": {"帳號問題": 11, "其他": 126, "充值問題": 1, "後台操作/業主認知": 3, "遊戲異常": 2, "遊戲上架/串接": 1}, "2026-01-04": {"其他": 161, "帳號問題": 6, "後台操作/業主認知": 1, "遊戲上架/串接": 9, "充值問題": 2, "遊戲異常": 4, "帳務對帳": 2}, "2026-01-05": {"優惠活動爭議": 4, "其他": 245, "遊戲上架/串接": 16, "充值問題": 5, "帳號問題": 9, "帳務對帳": 2, "遊戲異常": 5, "後台操作/業主認知": 7}, "2026-01-06": {"其他": 263, "遊戲上架/串接": 15, "優惠活動爭議": 4, "帳號問題": 17, "充值問題": 4, "遊戲異常": 3, "後台操作/業主認知": 6}, "2026-01-07": {"其他": 201, "帳號問題": 8, "後台操作/業主認知": 10, "優惠活動爭議": 9, "遊戲上架/串接": 1, "遊戲異常": 3, "充值問題": 1, "帳務對帳": 7}, "2026-01-08": {"帳號問題": 20, "其他": 209, "遊戲上架/串接": 5, "優惠活動爭議": 9, "遊戲異常": 5, "後台操作/業主認知": 7, "充值問題": 3, "帳務對帳": 3}, "2026-01-09": {"其他": 192, "遊戲上架/串接": 11, "帳號問題": 9, "優惠活動爭議": 4, "後台操作/業主認知": 5, "遊戲異常": 6, "充值問題": 3, "帳務對帳": 1}, "2026-01-10": {"帳號問題": 7, "其他": 183, "遊戲上架/串接": 7, "帳務對帳": 9, "優惠活動爭議": 3, "後台操作/業主認知": 3, "遊戲異常": 1, "充值問題": 2}, "2026-01-11": {"後台操作/業主認知": 9, "其他": 183, "遊戲上架/串接": 7, "帳號問題": 4, "遊戲異常": 1, "優惠活動爭議": 5}, "2026-01-12": {"其他": 251, "後台操作/業主認知": 6, "帳號問題": 8, "優惠活動爭議": 9, "充值問題": 2, "遊戲異常": 6, "帳務對帳": 3, "遊戲上架/串接": 2}, "2026-01-13": {"其他": 283, "遊戲上架/串接": 4, "後台操作/業主認知": 19, "帳號問題": 26, "充值問題": 6, "帳務對帳": 4, "優惠活動爭議": 16, "遊戲異常": 9}, "2026-01-14": {"帳號問題": 23, "其他": 282, "後台操作/業主認知": 6, "遊戲上架/串接": 11, "優惠活動爭議": 9, "帳務對帳": 2, "遊戲異常": 3, "充值問題": 2, "提款問題": 2}, "2026-01-15": {"其他": 235, "後台操作/業主認知": 8, "帳號問題": 21, "優惠活動爭議": 17, "遊戲上架/串接": 10, "帳務對帳": 1, "遊戲異常": 2, "提款問題": 3, "充值問題": 2}, "2026-01-16": {"遊戲上架/串接": 4, "其他": 249, "優惠活動爭議": 22, "充值問題": 6, "後台操作/業主認知": 2, "帳號問題": 16, "帳務對帳": 4}, "2026-01-17": {"帳號問題": 14, "其他": 127, "優惠活動爭議": 9, "遊戲上架/串接": 2, "帳務對帳": 2, "後台操作/業主認知": 2, "遊戲異常": 2, "充值問題": 1}, "2026-01-18": {"其他": 207, "帳號問題": 9, "充值問題": 5, "優惠活動爭議": 4, "帳務對帳": 3, "遊戲上架/串接": 5, "遊戲異常": 8, "後台操作/業主認知": 5}, "2026-01-19": {"其他": 171, "遊戲上架/串接": 11, "帳號問題": 14, "後台操作/業主認知": 11, "優惠活動爭議": 9, "帳務對帳": 1, "充值問題": 1, "遊戲異常": 1}, "2026-01-20": {"其他": 246, "遊戲上架/串接": 10, "帳號問題": 12, "優惠活動爭議": 11, "後台操作/業主認知": 11, "帳務對帳": 5, "充值問題": 5, "遊戲異常": 3}, "2026-01-21": {"其他": 288, "遊戲上架/串接": 11, "帳號問題": 20, "優惠活動爭議": 6, "後台操作/業主認知": 16, "帳務對帳": 17, "遊戲異常": 2}, "2026-01-22": {"帳號問題": 25, "其他": 260, "遊戲上架/串接": 5, "遊戲異常": 9, "後台操作/業主認知": 5, "優惠活動爭議": 16, "帳務對帳": 6, "充值問題": 7}, "2026-01-23": {"遊戲上架/串接": 7, "其他": 168, "帳號問題": 11, "優惠活動爭議": 5, "後台操作/業主認知": 2, "遊戲異常": 6, "帳務對帳": 2}, "2026-01-24": {"帳號問題": 15, "遊戲異常": 11, "其他": 161, "遊戲上架/串接": 2, "帳務對帳": 11, "後台操作/業主認知": 4, "優惠活動爭議": 2}, "2026-01-25": {"帳號問題": 8, "其他": 131, "帳務對帳": 10, "後台操作/業主認知": 9, "遊戲異常": 2, "遊戲上架/串接": 1, "充值問題": 1, "優惠活動爭議": 1}, "2026-01-26": {"其他": 334, "帳號問題": 43, "後台操作/業主認知": 22, "遊戲上架/串接": 20, "優惠活動爭議": 11, "充值問題": 7, "帳務對帳": 7, "遊戲異常": 6}, "2026-01-27": {"其他": 335, "帳號問題": 21, "優惠活動爭議": 13, "遊戲上架/串接": 14, "後台操作/業主認知": 9, "充值問題": 3, "遊戲異常": 1, "帳務對帳": 6}, "2026-01-28": {"遊戲上架/串接": 29, "其他": 384, "優惠活動爭議": 12, "帳號問題": 20, "遊戲異常": 7, "帳務對帳": 14, "充值問題": 4, "後台操作/業主認知": 4}, "2026-01-29": {"其他": 299, "後台操作/業主認知": 13, "充值問題": 5, "帳號問題": 27, "遊戲上架/串接": 16, "遊戲異常": 2, "帳務對帳": 9, "優惠活動爭議": 3, "提款問題": 1}, "2026-01-30": {"帳號問題": 11, "其他": 223, "遊戲上架/串接": 8, "帳務對帳": 9, "後台操作/業主認知": 3, "優惠活動爭議": 6, "充值問題": 2, "遊戲異常": 1}, "2026-01-31": {"帳號問題": 10, "其他": 146, "後台操作/業主認知": 10, "遊戲上架/串接": 2, "優惠活動爭議": 3, "充值問題": 8, "帳務對帳": 1, "提款問題": 1, "遊戲異常": 1}, "2026-02-01": {"帳號問題": 17, "優惠活動爭議": 12, "其他": 282, "帳務對帳": 1, "遊戲異常": 4, "遊戲上架/串接": 11, "後台操作/業主認知": 11, "充值問題": 9}, "2026-02-02": {"遊戲上架/串接": 9, "其他": 356, "帳號問題": 32, "優惠活動爭議": 11, "帳務對帳": 10, "後台操作/業主認知": 10, "充值問題": 17, "遊戲異常": 2}, "2026-02-03": {"其他": 322, "後台操作/業主認知": 19, "帳號問題": 25, "優惠活動爭議": 13, "遊戲上架/串接": 4, "充值問題": 2, "遊戲異常": 3, "帳務對帳": 4}, "2026-02-04": {"其他": 374, "後台操作/業主認知": 16, "提款問題": 2, "充值問題": 10, "帳號問題": 20, "遊戲上架/串接": 17, "遊戲異常": 2, "優惠活動爭議": 17, "帳務對帳": 16}, "2026-02-05": {"其他": 189, "遊戲上架/串接": 7, "優惠活動爭議": 13, "帳號問題": 11, "後台操作/業主認知": 7, "充值問題": 1, "遊戲異常": 3, "帳務對帳": 2}, "2026-02-06": {"其他": 268, "優惠活動爭議": 22, "帳號問題": 19, "遊戲上架/串接": 7, "後台操作/業主認知": 10, "充值問題": 5, "遊戲異常": 7, "帳務對帳": 2, "提款問題": 1}, "2026-02-07": {"帳號問題": 5, "優惠活動爭議": 3, "其他": 187, "後台操作/業主認知": 4, "帳務對帳": 1, "提款問題": 4, "充值問題": 3, "遊戲上架/串接": 2}, "2026-02-08": {"帳號問題": 6, "其他": 112, "帳務對帳": 5, "遊戲異常": 4, "充值問題": 1, "優惠活動爭議": 5, "後台操作/業主認知": 2}, "2026-02-09": {"帳號問題": 19, "其他": 238, "遊戲上架/串接": 8, "遊戲異常": 7, "帳務對帳": 5, "後台操作/業主認知": 13, "優惠活動爭議": 5, "充值問題": 4}, "2026-02-10": {"帳號問題": 19, "其他": 223, "優惠活動爭議": 10, "遊戲異常": 4, "帳務對帳": 7, "後台操作/業主認知": 1, "提款問題": 1, "遊戲上架/串接": 3}, "2026-02-11": {"後台操作/業主認知": 15, "其他": 382, "優惠活動爭議": 23, "帳號問題": 42, "遊戲上架/串接": 6, "帳務對帳": 7, "遊戲異常": 6, "充值問題": 6}, "2026-02-12": {"帳號問題": 48, "其他": 289, "優惠活動爭議": 17, "遊戲上架/串接": 7, "後台操作/業主認知": 6, "帳務對帳": 1, "遊戲異常": 3, "充值問題": 3}, "2026-02-13": {"其他": 289, "帳號問題": 28, "優惠活動爭議": 11, "後台操作/業主認知": 21, "遊戲上架/串接": 12, "帳務對帳": 15, "充值問題": 5, "遊戲異常": 5}, "2026-02-14": {"帳號問題": 5, "其他": 203, "後台操作/業主認知": 2, "遊戲上架/串接": 6, "優惠活動爭議": 11, "充值問題": 1, "遊戲異常": 3, "帳務對帳": 1}, "2026-02-15": {"帳號問題": 3, "其他": 134, "遊戲上架/串接": 7, "後台操作/業主認知": 4, "優惠活動爭議": 9, "遊戲異常": 5, "充值問題": 3, "帳務對帳": 3}, "2026-02-16": {"帳號問題": 2, "其他": 103, "帳務對帳": 3, "後台操作/業主認知": 1, "遊戲上架/串接": 3}, "2026-02-17": {"帳號問題": 6, "其他": 71, "遊戲異常": 4}, "2026-02-18": {"帳號問題": 3, "遊戲上架/串接": 2, "其他": 76, "優惠活動爭議": 10, "後台操作/業主認知": 3, "充值問題": 2, "遊戲異常": 3}, "2026-02-19": {"帳號問題": 2, "後台操作/業主認知": 3, "其他": 99, "優惠活動爭議": 6, "帳務對帳": 1, "遊戲異常": 4, "遊戲上架/串接": 2}, "2026-02-20": {"帳號問題": 8, "其他": 167, "優惠活動爭議": 7, "遊戲異常": 5, "後台操作/業主認知": 1, "遊戲上架/串接": 4, "充值問題": 3}, "2026-02-21": {"其他": 120, "帳號問題": 8, "遊戲異常": 3, "優惠活動爭議": 7, "帳務對帳": 2, "提款問題": 2, "充值問題": 1, "後台操作/業主認知": 1}, "2026-02-22": {"優惠活動爭議": 3, "其他": 85, "帳號問題": 3, "後台操作/業主認知": 1, "帳務對帳": 3, "遊戲異常": 1, "遊戲上架/串接": 8}, "2026-02-23": {"其他": 196, "遊戲上架/串接": 6, "帳號問題": 7, "優惠活動爭議": 6, "帳務對帳": 4, "充值問題": 9, "遊戲異常": 6, "後台操作/業主認知": 2}, "2026-02-24": {"其他": 271, "帳號問題": 34, "後台操作/業主認知": 10, "遊戲異常": 3, "遊戲上架/串接": 20, "優惠活動爭議": 4, "帳務對帳": 1, "充值問題": 3}, "2026-02-25": {"其他": 240, "後台操作/業主認知": 10, "帳號問題": 28, "遊戲上架/串接": 17, "優惠活動爭議": 18, "充值問題": 7, "帳務對帳": 3}, "2026-02-26": {"其他": 273, "帳號問題": 8, "後台操作/業主認知": 24, "優惠活動爭議": 8, "遊戲上架/串接": 13, "充值問題": 5, "帳務對帳": 2, "遊戲異常": 5}, "2026-02-27": {"其他": 204, "後台操作/業主認知": 8, "優惠活動爭議": 9, "帳號問題": 11, "充值問題": 4, "帳務對帳": 4, "遊戲上架/串接": 7, "遊戲異常": 6}, "2026-02-28": {"帳號問題": 11, "其他": 155, "後台操作/業主認知": 1}, "2026-03-01": {"帳號問題": 11, "其他": 211, "充值問題": 2, "後台操作/業主認知": 7, "遊戲上架/串接": 1, "帳務對帳": 1, "優惠活動爭議": 6, "遊戲異常": 2}, "2026-03-02": {"優惠活動爭議": 14, "其他": 211, "帳號問題": 19, "帳務對帳": 5, "後台操作/業主認知": 7, "遊戲上架/串接": 9, "遊戲異常": 3}, "2026-03-03": {"其他": 218, "帳號問題": 22, "遊戲異常": 2, "後台操作/業主認知": 6, "遊戲上架/串接": 9, "優惠活動爭議": 9, "充值問題": 1}, "2026-03-04": {"其他": 171, "帳號問題": 16, "後台操作/業主認知": 25, "遊戲上架/串接": 3, "充值問題": 3, "優惠活動爭議": 18, "提款問題": 1, "遊戲異常": 1}, "2026-03-05": {"帳號問題": 37, "其他": 293, "後台操作/業主認知": 4, "遊戲上架/串接": 12, "優惠活動爭議": 9, "遊戲異常": 3, "充值問題": 2}, "2026-03-06": {"其他": 309, "遊戲上架/串接": 11, "優惠活動爭議": 20, "帳號問題": 10, "充值問題": 4, "後台操作/業主認知": 4, "遊戲異常": 2, "帳務對帳": 2}, "2026-03-07": {"其他": 158, "帳號問題": 6, "遊戲異常": 2, "優惠活動爭議": 11, "遊戲上架/串接": 3, "充值問題": 1, "後台操作/業主認知": 6}, "2026-03-08": {"其他": 148, "遊戲上架/串接": 2, "帳號問題": 6, "帳務對帳": 1, "後台操作/業主認知": 6, "充值問題": 8, "優惠活動爭議": 4, "遊戲異常": 1}, "2026-03-09": {"其他": 215, "帳號問題": 7, "帳務對帳": 5, "優惠活動爭議": 10, "遊戲上架/串接": 8, "後台操作/業主認知": 2, "遊戲異常": 4, "充值問題": 3}, "2026-03-10": {"其他": 347, "帳號問題": 12, "後台操作/業主認知": 11, "遊戲上架/串接": 23, "優惠活動爭議": 17, "帳務對帳": 15, "充值問題": 1, "遊戲異常": 1}, "2026-03-11": {"後台操作/業主認知": 7, "其他": 214, "帳號問題": 16, "帳務對帳": 5, "優惠活動爭議": 20, "遊戲上架/串接": 6, "充值問題": 8}, "2026-03-12": {"其他": 286, "帳號問題": 9, "後台操作/業主認知": 6, "優惠活動爭議": 18, "充值問題": 3, "帳務對帳": 4, "遊戲上架/串接": 6, "遊戲異常": 5}, "2026-03-13": {"其他": 599, "帳號問題": 38, "後台操作/業主認知": 19, "優惠活動爭議": 26, "遊戲上架/串接": 17, "帳務對帳": 1, "遊戲異常": 6, "充值問題": 15, "提款問題": 6}, "2026-03-14": {"帳號問題": 9, "其他": 123, "後台操作/業主認知": 6, "遊戲上架/串接": 2, "優惠活動爭議": 3, "遊戲異常": 4, "提款問題": 4}, "2026-03-15": {"帳號問題": 2, "其他": 68, "帳務對帳": 1, "遊戲異常": 3, "提款問題": 4}, "2026-03-16": {"帳號問題": 9, "優惠活動爭議": 22, "其他": 243, "充值問題": 4, "遊戲異常": 1, "後台操作/業主認知": 10, "遊戲上架/串接": 5, "帳務對帳": 1, "提款問題": 1}, "2026-03-17": {"其他": 221, "帳號問題": 14, "後台操作/業主認知": 17, "遊戲上架/串接": 16, "優惠活動爭議": 17, "充值問題": 4, "帳務對帳": 3, "遊戲異常": 4}, "2026-03-18": {"其他": 267, "後台操作/業主認知": 19, "優惠活動爭議": 17, "帳號問題": 17, "充值問題": 5, "帳務對帳": 6, "遊戲異常": 2, "遊戲上架/串接": 9}, "2026-03-19": {"其他": 332, "後台操作/業主認知": 18, "帳號問題": 20, "遊戲異常": 3, "遊戲上架/串接": 19, "帳務對帳": 3, "優惠活動爭議": 15, "充值問題": 1}, "2026-03-20": {"其他": 225, "帳號問題": 27, "優惠活動爭議": 22, "後台操作/業主認知": 5, "充值問題": 4, "遊戲異常": 6, "遊戲上架/串接": 3}, "2026-03-21": {"帳號問題": 14, "其他": 195, "優惠活動爭議": 10, "後台操作/業主認知": 1, "遊戲上架/串接": 4, "帳務對帳": 6, "遊戲異常": 3}, "2026-03-22": {"帳號問題": 3, "其他": 100, "充值問題": 1, "後台操作/業主認知": 4, "優惠活動爭議": 2, "帳務對帳": 1}, "2026-03-23": {"後台操作/業主認知": 10, "其他": 229, "帳號問題": 13, "充值問題": 3, "優惠活動爭議": 11, "遊戲上架/串接": 8, "帳務對帳": 3, "遊戲異常": 2}, "2026-03-24": {"其他": 184, "後台操作/業主認知": 12, "帳號問題": 6, "遊戲上架/串接": 9, "優惠活動爭議": 7, "帳務對帳": 2, "充值問題": 2, "遊戲異常": 2}, "2026-03-25": {"帳號問題": 12, "後台操作/業主認知": 7, "其他": 195, "優惠活動爭議": 21, "遊戲上架/串接": 17, "帳務對帳": 3, "充值問題": 3, "遊戲異常": 1}, "2026-03-26": {"其他": 201, "帳號問題": 13, "後台操作/業主認知": 8, "優惠活動爭議": 11, "遊戲異常": 5, "遊戲上架/串接": 17, "充值問題": 4}, "2026-03-27": {"帳號問題": 14, "遊戲異常": 11, "遊戲上架/串接": 17, "其他": 243, "後台操作/業主認知": 1, "帳務對帳": 6, "優惠活動爭議": 8, "充值問題": 2}, "2026-03-28": {"帳號問題": 4, "其他": 107, "優惠活動爭議": 3, "遊戲異常": 2, "充值問題": 2, "後台操作/業主認知": 1, "遊戲上架/串接": 4, "帳務對帳": 4}, "2026-03-29": {"帳號問題": 24, "其他": 212, "帳務對帳": 3, "充值問題": 3, "遊戲異常": 4, "後台操作/業主認知": 6, "優惠活動爭議": 1, "遊戲上架/串接": 1}, "2026-03-30": {"充值問題": 11, "其他": 315, "遊戲上架/串接": 12, "帳號問題": 8, "遊戲異常": 7, "後台操作/業主認知": 15, "優惠活動爭議": 16, "帳務對帳": 1}, "2026-03-31": {"帳務對帳": 3, "其他": 278, "優惠活動爭議": 6, "遊戲上架/串接": 11, "帳號問題": 8, "遊戲異常": 2, "充值問題": 2, "後台操作/業主認知": 2}, "2026-04-01": {"其他": 340, "後台操作/業主認知": 8, "優惠活動爭議": 17, "帳號問題": 18, "充值問題": 7, "遊戲上架/串接": 12, "遊戲異常": 12, "帳務對帳": 2}, "2026-04-02": {"優惠活動爭議": 24, "其他": 309, "帳號問題": 35, "遊戲上架/串接": 15, "後台操作/業主認知": 8, "充值問題": 3, "帳務對帳": 4, "遊戲異常": 2}, "2026-04-03": {"其他": 196, "帳號問題": 11, "優惠活動爭議": 17, "遊戲異常": 2, "遊戲上架/串接": 5, "充值問題": 3, "後台操作/業主認知": 1, "帳務對帳": 1}, "2026-04-04": {"帳號問題": 4, "其他": 178, "充值問題": 2, "後台操作/業主認知": 1, "遊戲異常": 2, "優惠活動爭議": 2, "帳務對帳": 9, "遊戲上架/串接": 2, "提款問題": 1}, "2026-04-05": {"充值問題": 3, "其他": 192, "優惠活動爭議": 1, "後台操作/業主認知": 3, "帳號問題": 4, "帳務對帳": 3, "遊戲上架/串接": 1}, "2026-04-06": {"帳號問題": 3, "其他": 152, "帳務對帳": 4, "遊戲上架/串接": 3, "遊戲異常": 1, "優惠活動爭議": 1, "後台操作/業主認知": 1}, "2026-04-07": {"後台操作/業主認知": 5, "其他": 347, "優惠活動爭議": 15, "帳號問題": 6, "遊戲上架/串接": 18, "遊戲異常": 8, "帳務對帳": 6}, "2026-04-08": {"其他": 334, "後台操作/業主認知": 28, "帳務對帳": 8, "帳號問題": 23, "優惠活動爭議": 10, "充值問題": 11, "遊戲上架/串接": 3, "遊戲異常": 13}, "2026-04-09": {"帳號問題": 16, "其他": 301, "優惠活動爭議": 12, "後台操作/業主認知": 7, "充值問題": 6, "帳務對帳": 11, "遊戲上架/串接": 7, "遊戲異常": 4}, "2026-04-10": {"其他": 254, "帳號問題": 20, "後台操作/業主認知": 3, "帳務對帳": 3, "遊戲上架/串接": 10, "遊戲異常": 5, "優惠活動爭議": 2, "充值問題": 2}, "2026-04-11": {"其他": 204, "帳務對帳": 3, "後台操作/業主認知": 5, "帳號問題": 3, "遊戲上架/串接": 4, "優惠活動爭議": 2, "遊戲異常": 3}, "2026-04-12": {"帳號問題": 16, "其他": 150, "優惠活動爭議": 6, "遊戲上架/串接": 6, "遊戲異常": 9, "充值問題": 2, "帳務對帳": 1, "後台操作/業主認知": 3}, "2026-04-13": {"帳號問題": 1, "帳務對帳": 2, "其他": 36}};
 
-// ========== TEMPLATES DATA ==========
+// Violations table
+var vBody = document.getElementById('violationsBody');
+VIOLATIONS.forEach(function(v) {
+    var typeClass = v.type.includes('時間') ? 'badge-warning' : 'badge-danger';
+    var row = document.createElement('tr');
+    row.innerHTML = '<td><span class="badge '+typeClass+'">'+v.type+'</span></td><td>'+v.station+'</td><td>'+v.from+'</td><td>'+v.date+'</td><td style="max-width:300px;color:#ccc;">'+v.text+'</td>';
+    vBody.appendChild(row);
+});
+
+
 const TEMPLATES = [
     {
         title: "後台設定問題",
@@ -1042,205 +1177,8 @@ const TEMPLATES = [
     }
 ];
 
-// ========== FAQ DATA ==========
-const FAQ_DATA = [
-    {
-        cat: "帳號問題",
-        items: [
-            { q: "帳號被鎖定無法登入，該怎麼辦?", a: "帳號被鎖定通常是因為登入失敗次數過多或觸發安全機制。建議：<ol><li>確認輸入的帳號及密碼是否正確</li><li>等待 15-30 分鐘後重新嘗試</li><li>如問題持續，提供帳號資訊由客服進行解除</li></ol>" },
-            { q: "忘記帳號或密碼，如何重設?", a: "提供以下重設方式：<ol><li>使用「忘記密碼」功能，系統將寄送重設連結至註冊信箱或綁定手機</li><li>如無法接收郵件，提供註冊時的相關資訊（真名、身份驗證碼等）</li><li>驗證身份後協助重設密碼</li></ol>" },
-            { q: "帳號顯示異常或被盜用?", a: "安全處理步驟：<ol><li>立即修改密碼（含大小寫字母、數字、符號）</li><li>綁定雙因素驗證</li><li>檢查最近的登入紀錄和交易記錄</li><li>如發現異常交易，將進行凍結及調查</li></ol>" },
-            { q: "帳號被暫停或禁用?", a: "常見原因：<ol><li>違反服務條款（如重複洗碼、異常行為）</li><li>風控機制觸發的臨時限制</li><li>未通過實名認證</li></ol>臨時限制通常 24-72 小時後自動解除；永久禁用需經理級審查。" },
-            { q: "如何更換綁定的手機或信箱?", a: "在帳戶設定中更新：<ol><li>登入後進入「帳號設定」</li><li>點選「修改手機」或「修改信箱」</li><li>系統寄送驗證碼到原手機或信箱，完成驗證即可更新</li></ol>" }
-        ]
-    },
-    {
-        cat: "充值問題",
-        items: [
-            { q: "充值後金額未入帳?", a: "可能原因：<ol><li><strong>銀行端延遲</strong> - 通常 5-30 分鐘內會入帳</li><li><strong>銀行卡額度不足</strong> - 確認卡片額度</li><li><strong>帳號資訊不符</strong> - 確保帳號與銀行卡資訊一致</li><li>超過 1 小時未入帳，提供交易編號進行查詢</li></ol>" },
-            { q: "充值失敗後餘額被扣?", a: "處理方式：<ol><li>提供交易編號、充值時間、金額</li><li>提供銀行帳戶資訊（最後 4 碼）</li><li>查詢銀行交易記錄並進行退款</li></ol>通常退款需要 3-5 個工作日。" }
-        ]
-    },
-    {
-        cat: "遊戲異常",
-        items: [
-            { q: "遊戲載入失敗或卡住?", a: "解決步驟：<ol><li>檢查網路連線是否穩定</li><li>清除瀏覽器或應用快取</li><li>更新到最新版本</li><li>更換瀏覽器嘗試</li><li>如持續異常，提供設備資訊和錯誤截圖</li></ol>" },
-            { q: "遊戲獎勵或積分未正確顯示?", a: "排查步驟：<ol><li>重新登出再登入</li><li>檢查獎勵記錄頁面</li><li>確認是否達成領取條件</li><li>確認是否有時效限制</li></ol>確認遺漏後會手動補發。" }
-        ]
-    },
-    {
-        cat: "提款問題",
-        items: [
-            { q: "提款申請多久會入帳?", a: "取決於方式：<ol><li><strong>銀行轉帳</strong> - 通常 1-3 個工作日</li><li><strong>第三方支付</strong> - 即時至 24 小時</li><li><strong>國際匯款</strong> - 5-10 個工作日</li></ol>超過預期時間需要銀行端追蹤。" },
-            { q: "提款被拒絕?", a: "常見原因：<ol><li>帳號未完成實名認證</li><li>安全檢查或風控觸發</li><li>超過每日/月提款限額</li><li>銀行端拒絕</li><li>未達提款條件</li></ol>" }
-        ]
-    },
-    {
-        cat: "優惠活動爭議",
-        items: [
-            { q: "活動條款與實際獎勵不符?", a: "解決流程：<ol><li>提供活動連結或名稱</li><li>提供參與記錄（時間、金額）</li><li>說明預期與實際差異</li><li>核對活動條款確認是否有系統錯誤</li></ol>確認為平台錯誤才進行補發。" },
-            { q: "活動獎勵有洗碼要求嗎?", a: "使用限制：<ol><li>大多數獎勵有流水倍數要求（如 5 倍）</li><li>某些獎勵限定特定遊戲</li><li>部分不可與其他優惠疊加</li><li>獎勵可能有使用期限</li></ol>" }
-        ]
-    },
-    {
-        cat: "帳務對帳",
-        items: [
-            { q: "帳戶餘額與預期不符?", a: "查詢流程：<ol><li>查看「交易紀錄」或「帳務明細」</li><li>檢查近期充值、提款、遊戲輸贏記錄</li><li>確認是否有未結算訂單或未領取獎勵</li><li>進行完整帳務核對</li></ol>" },
-            { q: "提款後帳戶扣款但銀行未收到?", a: "處理方式：<ol><li>確認提款申請狀態</li><li>檢查銀行帳戶（可能延遲）</li><li>24 小時後未入帳，聯繫追蹤</li><li>需要 3-5 個工作日完成調查</li></ol>" }
-        ]
-    },
-    {
-        cat: "遊戲上架/串接",
-        items: [
-            { q: "遊戲上架需要什麼材料?", a: "基本材料：<ol><li>遊戲基本信息（名稱、版本號）</li><li>遊戲檔案（簽名版本）</li><li>隱私政策和服務條款</li><li>遊戲截圖（至少 3-5 張）</li><li>開發者資訊</li></ol>" },
-            { q: "串接失敗怎麼辦?", a: "診斷步驟：<ol><li>檢查 API Key / Secret 配置</li><li>驗證請求格式是否符合文檔</li><li>檢查 IP 白名單（雙向）</li><li>查看錯誤日誌</li><li>提供錯誤代碼可加速排查</li></ol>" }
-        ]
-    },
-    {
-        cat: "後台操作/業主認知",
-        items: [
-            { q: "後台如何調整遊戲參數?", a: "標準流程：<ol><li>登入業主後台（需管理員權限）</li><li>進入「遊戲設定」或「遊戲參數」</li><li>選擇遊戲，編輯參數</li><li>保存並確認變更已應用</li></ol>不確定的設定先在 UAT 環境跑一次。" },
-            { q: "業主帳號權限如何調整?", a: "管理步驟：<ol><li>進入「帳號管理」或「權限設定」</li><li>選擇要編輯的帳號</li><li>勾選/取消權限</li><li>保存變更</li></ol>涉及安全敏感操作需驗證管理員身份。" }
-        ]
-    }
-];
 
-// ========== CHART CONFIG ==========
-const COLORS = ['#FF6B35','#00B4D8','#00D99F','#FFB300','#FF4444','#9D4EDD','#3A86FF','#FB5607','#8338EC','#FFBE0B'];
-Chart.defaults.color = '#aaa';
-Chart.defaults.borderColor = 'rgba(255,107,53,0.1)';
-Chart.defaults.font.family = "system-ui,'Noto Sans TC',sans-serif";
-
-// ========== CHARTS ==========
-const catNames = Object.keys(CATEGORIES).filter(k => k !== '其他');
-const catValues = catNames.map(k => CATEGORIES[k]);
-
-// Category Pie (excluding 其他)
-new Chart(document.getElementById('categoryPie'), {
-    type: 'doughnut',
-    data: {
-        labels: catNames,
-        datasets: [{ data: catValues, backgroundColor: COLORS.slice(0, catNames.length), borderColor: '#1a1a2e', borderWidth: 2 }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: true,
-        plugins: {
-            legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, font: { size: 11 } } },
-            tooltip: { callbacks: { label: function(ctx) { var t = ctx.dataset.data.reduce((a,b)=>a+b,0); return ctx.label+': '+ctx.parsed+' ('+(ctx.parsed/t*100).toFixed(1)+'%)'; } } }
-        }
-    }
-});
-
-// Category Bar (all)
-new Chart(document.getElementById('categoryBar'), {
-    type: 'bar',
-    data: {
-        labels: Object.keys(CATEGORIES_ALL),
-        datasets: [{ label: '件數', data: Object.values(CATEGORIES_ALL), backgroundColor: COLORS.concat(COLORS).slice(0, 9).map(c => c + 'CC'), borderWidth: 0 }]
-    },
-    options: {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: true,
-        plugins: { legend: { display: false } },
-        scales: { x: { beginAtZero: true } }
-    }
-});
-
-// Trend charts
-function getDateRange(days) {
-    var end = new Date('2026-04-13'), dates = [];
-    for (var i = days-1; i >= 0; i--) { var d = new Date(end); d.setDate(d.getDate()-i); dates.push(d.toISOString().split('T')[0]); }
-    return dates;
-}
-
-function makeTrend(id, days) {
-    var dates = getDateRange(days);
-    new Chart(document.getElementById(id), {
-        type: 'line',
-        data: {
-            labels: dates.map(d => d.substring(5)),
-            datasets: catNames.map((cat, idx) => ({
-                label: cat,
-                data: dates.map(d => (DAILY[d] && DAILY[d][cat]) || 0),
-                borderColor: COLORS[idx],
-                backgroundColor: 'transparent',
-                borderWidth: 1.5,
-                pointRadius: days > 60 ? 0 : 2,
-                tension: 0.3
-            }))
-        },
-        options: {
-            responsive: true, maintainAspectRatio: true,
-            plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } },
-            scales: { y: { beginAtZero: true }, x: { ticks: { maxTicksLimit: days > 60 ? 12 : 10, font: { size: 9 } } } }
-        }
-    });
-}
-makeTrend('trend30', 30);
-makeTrend('trend90', 90);
-
-// Station bar
-new Chart(document.getElementById('stationBar'), {
-    type: 'bar',
-    data: {
-        labels: Object.keys(STATION),
-        datasets: [{ label: '客訴數', data: Object.values(STATION), backgroundColor: COLORS.concat(COLORS).slice(0,16).map(c => c+'CC'), borderWidth: 0 }]
-    },
-    options: {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { x: { beginAtZero: true } }
-    }
-});
-
-// Top Issues chart
-new Chart(document.getElementById('topIssuesChart'), {
-    type: 'bar',
-    data: {
-        labels: TOP_ISSUES.map(i => i[0]),
-        datasets: [{ label: '出現次數', data: TOP_ISSUES.map(i => i[1]), backgroundColor: '#FF6B35CC', borderWidth: 0 }]
-    },
-    options: {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { x: { beginAtZero: true } }
-    }
-});
-
-// Issue list
-var list = document.getElementById('issueList');
-TOP_ISSUES.forEach(function(issue, idx) {
-    var li = document.createElement('li');
-    li.className = 'issue-item';
-    li.innerHTML = '<span class="issue-rank">'+(idx+1)+'.</span><span class="issue-name">'+issue[0]+'</span><span class="issue-count">'+issue[1]+'</span>';
-    list.appendChild(li);
-});
-
-// Severity pie
-new Chart(document.getElementById('severityPie'), {
-    type: 'doughnut',
-    data: {
-        labels: ['P2 中等','P1 高','P0 緊急'],
-        datasets: [{ data: [SEVERITY.P2, SEVERITY.P1, SEVERITY.P0], backgroundColor: ['#FFB300','#ff8800','#ff4444'], borderColor: '#1a1a2e', borderWidth: 2 }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: true,
-        plugins: {
-            legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true } },
-            tooltip: { callbacks: { label: function(ctx) { var t = ctx.dataset.data.reduce((a,b)=>a+b,0); return ctx.label+': '+ctx.parsed+' ('+(ctx.parsed/t*100).toFixed(1)+'%)'; } } }
-        }
-    }
-});
-
-// Violations table
-var vBody = document.getElementById('violationsBody');
-VIOLATIONS.forEach(function(v) {
-    var typeClass = v.type.includes('時間') ? 'badge-warning' : 'badge-danger';
-    var row = document.createElement('tr');
-    row.innerHTML = '<td><span class="badge '+typeClass+'">'+v.type+'</span></td><td>'+v.station+'</td><td>'+v.from+'</td><td>'+v.date+'</td><td style="max-width:300px;color:#ccc;">'+v.text+'</td>';
-    vBody.appendChild(row);
-});
-
-// ========== TEMPLATES ==========
+// Templates rendering
 var tGrid = document.getElementById('templateGrid');
 TEMPLATES.forEach(function(t, idx) {
     var card = document.createElement('div');
@@ -1254,13 +1192,52 @@ TEMPLATES.forEach(function(t, idx) {
     tGrid.appendChild(card);
 });
 
-// ========== FAQ ==========
+
+const FAQ_DATA = [
+    { cat: "帳號問題", items: [
+        { q: "帳號被鎖定無法登入，該怎麼辦?", a: "帳號被鎖定通常是因為登入失敗次數過多或觸發安全機制。建議：<ol><li>確認輸入的帳號及密碼是否正確</li><li>等待 15-30 分鐘後重新嘗試</li><li>如問題持續，提供帳號資訊由客服進行解除</li></ol>" },
+        { q: "忘記帳號或密碼，如何重設?", a: "提供以下重設方式：<ol><li>使用「忘記密碼」功能，系統將寄送重設連結至註冊信箱或綁定手機</li><li>如無法接收郵件，提供註冊時的相關資訊（真名、身份驗證碼等）</li><li>驗證身份後協助重設密碼</li></ol>" },
+        { q: "帳號顯示異常或被盜用?", a: "安全處理步驟：<ol><li>立即修改密碼（含大小寫字母、數字、符號）</li><li>綁定雙因素驗證</li><li>檢查最近的登入紀錄和交易記錄</li><li>如發現異常交易，將進行凍結及調查</li></ol>" },
+        { q: "帳號被暫停或禁用?", a: "常見原因：<ol><li>違反服務條款（如重複洗碼、異常行為）</li><li>風控機制觸發的臨時限制</li><li>未通過實名認證</li></ol>臨時限制通常 24-72 小時後自動解除；永久禁用需經理級審查。" },
+        { q: "如何更換綁定的手機或信箱?", a: "在帳戶設定中更新：<ol><li>登入後進入「帳號設定」</li><li>點選「修改手機」或「修改信箱」</li><li>系統寄送驗證碼到原手機或信箱，完成驗證即可更新</li></ol>" }
+    ]},
+    { cat: "充值問題", items: [
+        { q: "充值後金額未入帳?", a: "可能原因：<ol><li><strong>銀行端延遲</strong> - 通常 5-30 分鐘內會入帳</li><li><strong>銀行卡額度不足</strong> - 確認卡片額度</li><li><strong>帳號資訊不符</strong> - 確保帳號與銀行卡資訊一致</li><li>超過 1 小時未入帳，提供交易編號進行查詢</li></ol>" },
+        { q: "充值失敗後餘額被扣?", a: "處理方式：<ol><li>提供交易編號、充值時間、金額</li><li>提供銀行帳戶資訊（最後 4 碼）</li><li>查詢銀行交易記錄並進行退款</li></ol>通常退款需要 3-5 個工作日。" }
+    ]},
+    { cat: "遊戲異常", items: [
+        { q: "遊戲載入失敗或卡住?", a: "解決步驟：<ol><li>檢查網路連線是否穩定</li><li>清除瀏覽器或應用快取</li><li>更新到最新版本</li><li>更換瀏覽器嘗試</li><li>如持續異常，提供設備資訊和錯誤截圖</li></ol>" },
+        { q: "遊戲獎勵或積分未正確顯示?", a: "排查步驟：<ol><li>重新登出再登入</li><li>檢查獎勵記錄頁面</li><li>確認是否達成領取條件</li><li>確認是否有時效限制</li></ol>確認遺漏後會手動補發。" }
+    ]},
+    { cat: "提款問題", items: [
+        { q: "提款申請多久會入帳?", a: "取決於方式：<ol><li><strong>銀行轉帳</strong> - 通常 1-3 個工作日</li><li><strong>第三方支付</strong> - 即時至 24 小時</li><li><strong>國際匯款</strong> - 5-10 個工作日</li></ol>超過預期時間需要銀行端追蹤。" },
+        { q: "提款被拒絕?", a: "常見原因：<ol><li>帳號未完成實名認證</li><li>安全檢查或風控觸發</li><li>超過每日/月提款限額</li><li>銀行端拒絕</li><li>未達提款條件</li></ol>" }
+    ]},
+    { cat: "優惠活動爭議", items: [
+        { q: "活動條款與實際獎勵不符?", a: "解決流程：<ol><li>提供活動連結或名稱</li><li>提供參與記錄（時間、金額）</li><li>說明預期與實際差異</li><li>核對活動條款確認是否有系統錯誤</li></ol>確認為平台錯誤才進行補發。" },
+        { q: "活動獎勵有洗碼要求嗎?", a: "使用限制：<ol><li>大多數獎勵有流水倍數要求（如 5 倍）</li><li>某些獎勵限定特定遊戲</li><li>部分不可與其他優惠疊加</li><li>獎勵可能有使用期限</li></ol>" }
+    ]},
+    { cat: "帳務對帳", items: [
+        { q: "帳戶餘額與預期不符?", a: "查詢流程：<ol><li>查看「交易紀錄」或「帳務明細」</li><li>檢查近期充值、提款、遊戲輸贏記錄</li><li>確認是否有未結算訂單或未領取獎勵</li><li>進行完整帳務核對</li></ol>" },
+        { q: "提款後帳戶扣款但銀行未收到?", a: "處理方式：<ol><li>確認提款申請狀態</li><li>檢查銀行帳戶（可能延遲）</li><li>24 小時後未入帳，聯繫追蹤</li><li>需要 3-5 個工作日完成調查</li></ol>" }
+    ]},
+    { cat: "遊戲上架/串接", items: [
+        { q: "遊戲上架需要什麼材料?", a: "基本材料：<ol><li>遊戲基本信息（名稱、版本號）</li><li>遊戲檔案（簽名版本）</li><li>隱私政策和服務條款</li><li>遊戲截圖（至少 3-5 張）</li><li>開發者資訊</li></ol>" },
+        { q: "串接失敗怎麼辦?", a: "診斷步驟：<ol><li>檢查 API Key / Secret 配置</li><li>驗證請求格式是否符合文檔</li><li>檢查 IP 白名單（雙向）</li><li>查看錯誤日誌</li><li>提供錯誤代碼可加速排查</li></ol>" }
+    ]},
+    { cat: "後台操作/業主認知", items: [
+        { q: "後台如何調整遊戲參數?", a: "標準流程：<ol><li>登入業主後台（需管理員權限）</li><li>進入「遊戲設定」或「遊戲參數」</li><li>選擇遊戲，編輯參數</li><li>保存並確認變更已應用</li></ol>不確定的設定先在 UAT 環境跑一次。" },
+        { q: "業主帳號權限如何調整?", a: "管理步驟：<ol><li>進入「帳號管理」或「權限設定」</li><li>選擇要編輯的帳號</li><li>勾選/取消權限</li><li>保存變更</li></ol>涉及安全敏感操作需驗證管理員身份。" }
+    ]}
+];
+
+
+// FAQ rendering
 var faqContainer = document.getElementById('faqContainer');
 FAQ_DATA.forEach(function(cat) {
     var section = document.createElement('div');
     section.className = 'faq-category';
     section.innerHTML = '<div class="faq-category-title">'+cat.cat+'</div>';
-
     cat.items.forEach(function(item) {
         var faqItem = document.createElement('div');
         faqItem.className = 'faq-item';
@@ -1269,27 +1246,25 @@ FAQ_DATA.forEach(function(cat) {
             + '<div class="faq-a">'+item.a+'</div>';
         section.appendChild(faqItem);
     });
-
     faqContainer.appendChild(section);
 });
 
-// ========== NAV ACTIVE STATE ==========
+
+// Nav active state
 var navLinks = document.querySelectorAll('.nav-link');
 var sections = document.querySelectorAll('.section[id]');
-
 window.addEventListener('scroll', function() {
     var scrollPos = window.scrollY + 100;
     sections.forEach(function(section) {
         if (section.offsetTop <= scrollPos && (section.offsetTop + section.offsetHeight) > scrollPos) {
             navLinks.forEach(function(link) {
                 link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + section.id) {
-                    link.classList.add('active');
-                }
+                if (link.getAttribute('href') === '#' + section.id) link.classList.add('active');
             });
         }
     });
 });
+
 </script>
 </body>
 </html>
