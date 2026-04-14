@@ -54,7 +54,7 @@ CSS = r"""
 :root{--primary:#FF6B35;--primary-light:rgba(255,107,53,.15);--primary-dim:rgba(255,107,53,.08);--bg-dark:#1a1a2e;--bg-card:rgba(30,40,60,.85);--bg:var(--bg-dark);--card:var(--bg-card);--text:#e8e8e8;--text-dim:#aaa;--border:rgba(255,107,53,.2);--success:#00D99F;--warning:#FFB300;--danger:#ff4444;--info:#00B4D8}
 *{margin:0;padding:0;box-sizing:border-box}
 html{background:var(--bg-dark)}
-body{font-family:system-ui,'Noto Sans TC',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:var(--text);min-height:100vh;line-height:1.6}
+body{font-family:system-ui,'Noto Sans TC',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg-dark);background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:var(--text);min-height:100vh;line-height:1.6}
 .nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(26,26,46,.95);backdrop-filter:blur(20px);border-bottom:2px solid var(--primary);padding:0 20px;display:flex;align-items:center;height:56px}
 .nav-brand{font-weight:700;font-size:1.1em;color:var(--primary);margin-right:30px;white-space:nowrap}
 .nav-links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
@@ -213,7 +213,7 @@ def pl_section(data, key, num):
 <div class="chart-grid">
 <div class="chart-box"><h3>嚴重度分布</h3><div class="chart-wrap"><canvas id="{key}SevPie"></canvas></div></div>
 <div class="card"><h3>嚴重度對應處理原則</h3><table><thead><tr><th>等級</th><th>定義</th><th>回應時限</th><th>處理方式</th></tr></thead><tbody>
-<tr><td><span class="badge badge-danger">P0 緊急</span></td><td>大量用戶受影響 / 資金異常</td><td>5 分鐘</td><td>直接電話上級主管</td></tr>
+<tr><td><span class="badge badge-danger">P0 緊急</span></td><td>大量用戶受影響 / 資金異常</td><td>5 分鐘</td><td>直接電話 Robin</td></tr>
 <tr><td><span class="badge badge-warning">P1 高</span></td><td>單一站點整體異常</td><td>15 分鐘</td><td>回報 → Slack → 追蹤</td></tr>
 <tr><td><span class="badge badge-info">P2 中</span></td><td>個別用戶問題</td><td>1 小時</td><td>標準 SOP 處理</td></tr>
 </tbody></table></div></div>
@@ -515,20 +515,20 @@ def escalation_section():
 <div class="flow-arrow">&#10148;</div>
 <div class="flow-step">Slack 對應窗口<br><small style="color:var(--text-dim)">上面都無解時</small></div>
 <div class="flow-arrow">&#10148;</div>
-<div class="flow-step" style="border-color:var(--danger);background:rgba(255,68,68,.15)">升級上級主管<br><small style="color:var(--text-dim)">由上級主管整合判斷</small></div>
+<div class="flow-step" style="border-color:var(--danger);background:rgba(255,68,68,.15)">升級 Robin<br><small style="color:var(--text-dim)">由 Robin 整合判斷</small></div>
 </div></div>
 <div class="chart-grid">
-<div class="card"><h3>Slack 找對的窗口</h3><table><thead><tr><th>問題</th><th>對應窗口</th></tr></thead><tbody>
-<tr><td>lilian 前端</td><td>前端工程團隊</td></tr>
-<tr><td><strong>lilian 後端主程式</strong></td><td><strong>Lilian 主程式窗口</strong></td></tr>
-<tr><td>lilian 一般後端</td><td>後端工程團隊</td></tr>
-<tr><td><strong>MG 集成後台</strong></td><td><strong>MG 工程窗口</strong></td></tr>
-<tr><td>信用版 GA / DBA</td><td>GA/DBA 窗口</td></tr>
+<div class="card"><h3>Slack 找對的人</h3><table><thead><tr><th>問題</th><th>對應窗口</th></tr></thead><tbody>
+<tr><td>lilian 前端</td><td>David / Dobi / Ludde</td></tr>
+<tr><td><strong>lilian 後端主程式</strong></td><td><strong>Peter</strong></td></tr>
+<tr><td>lilian 一般後端</td><td>Jerry / James / frank / Ada</td></tr>
+<tr><td><strong>MG 集成後台</strong></td><td><strong>Jay</strong></td></tr>
+<tr><td>信用版 GA / DBA</td><td>johnson</td></tr>
 <tr><td>TG 捕魚 (TP)</td><td>TP-dp 群</td></tr>
 <tr><td>FF / DD 外包</td><td>FF 技術窗口 (Discord)</td></tr>
-<tr><td>IP / VPN / 網路</td><td>網路窗口 / IP/VPN 窗口</td></tr>
-<tr><td>排班 / 人事</td><td>人事窗口</td></tr>
-<tr><td><strong>上層決策</strong></td><td style="color:var(--danger)"><strong>一律先找上級主管</strong></td></tr>
+<tr><td>IP / VPN / 網路</td><td>alex / RayLin</td></tr>
+<tr><td>排班 / 人事</td><td>Laura</td></tr>
+<tr><td><strong>上層決策</strong></td><td style="color:var(--danger)"><strong>一律先找 Robin</strong></td></tr>
 </tbody></table></div>
 <div class="card"><h3>證據三件套（缺一不可）</h3><table><thead><tr><th>問題類型</th><th>必備證據</th></tr></thead><tbody>
 <tr><td>帳號</td><td>帳號 + 最後登入時間 + 截圖</td></tr>
@@ -697,8 +697,8 @@ def main():
 {faq_section("12")}
 {escalation_section()}
 <footer>
-<p>Wolves Digital FAE 客服知識庫簡報 v3.0 | 資料截至 2026-04-13 | 4 大產品線 / 24 站點 / {o['totalMessages']:,} 筆訊息</p>
-<p style="margin-top:4px">本頁面為公開版，已移除內部人員姓名。完整 SOP 請查閱內部文件。</p>
+<p>Wolves Digital FAE 客服知識庫簡報 v3.0.3 | 資料截至 2026-04-13 | 4 大產品線 / 24 站點 / {o['totalMessages']:,} 筆訊息</p>
+<p style="margin-top:4px;color:var(--warning)">⚠️ 內部訓練用 · 禁止外傳 · Robin 已核准</p>
 </footer></div>
 <script>{build_js()}</script>
 </body></html>"""
