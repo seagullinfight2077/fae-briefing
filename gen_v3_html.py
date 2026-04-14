@@ -51,8 +51,9 @@ PL_CSS    = {"overall":"","line":"pl-line","credit":"pl-credit","vendor":"pl-ven
 
 # ── CSS (unchanged from v2 + new tab styles) ────────────────────────────────
 CSS = r"""
-:root{--primary:#FF6B35;--primary-light:rgba(255,107,53,.15);--primary-dim:rgba(255,107,53,.08);--bg-dark:#1a1a2e;--bg-card:rgba(30,40,60,.85);--text:#e8e8e8;--text-dim:#aaa;--border:rgba(255,107,53,.2);--success:#00D99F;--warning:#FFB300;--danger:#ff4444;--info:#00B4D8}
+:root{--primary:#FF6B35;--primary-light:rgba(255,107,53,.15);--primary-dim:rgba(255,107,53,.08);--bg-dark:#1a1a2e;--bg-card:rgba(30,40,60,.85);--bg:var(--bg-dark);--card:var(--bg-card);--text:#e8e8e8;--text-dim:#aaa;--border:rgba(255,107,53,.2);--success:#00D99F;--warning:#FFB300;--danger:#ff4444;--info:#00B4D8}
 *{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg-dark)}
 body{font-family:system-ui,'Noto Sans TC',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:var(--text);min-height:100vh;line-height:1.6}
 .nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(26,26,46,.95);backdrop-filter:blur(20px);border-bottom:2px solid var(--primary);padding:0 20px;display:flex;align-items:center;height:56px}
 .nav-brand{font-weight:700;font-size:1.1em;color:var(--primary);margin-right:30px;white-space:nowrap}
@@ -312,29 +313,63 @@ def station_dashboard_section(stats, num):
 
 
 def violations_section(num):
-    """Anonymized violation statistics — NO names, NO dates, NO stations."""
+    """Full violation cases with real names, dates, quotes — internal use."""
+    cases_html = ""
+    cases = [
+        ("1","真實違反","嚴重","badge-danger","2026-04-01","TP 捕魚（遊戲商群）","Gao Firball741","鐵律 #2 禁用詞 + 情緒升級","「不可能朔源」","對方用「不可能」反問 3 次，對話情緒急速升級。Vendor 關係受損。"),
+        ("2","真實違反","中度","badge-danger","2026-02-10","信用版_QA","Firball02","鐵律 #2 時間承諾","「本次維護預計時長半小時」","維護公告中給出明確時間承諾，若超時業主將以此為據。"),
+        ("3","真實違反","輕度","badge-warning","2026-01-16","L13_第一名","Dan","鐵律 #2 禁用詞「一定」","「可以玩這活動的玩家一定是有儲值的」","解釋活動規則時使用「一定」，站長可能引用。"),
+        ("4","邊界案例","低","badge-info","2026-03-16","L09_伍洲","Dan","鐵律 #2 禁用詞「一定」","「一定需要設定白名單才可以訪問」","技術性說明，語境為系統必要條件。"),
+        ("5","邊界案例","極低","badge-info","2026-01-28","A95_九五至尊","Firball02","鐵律 #2 禁用詞「一定」","「不代表轉一定有倍數及分數」","否定句中的「一定」語意合理。"),
+        ("6","邊界案例","低-中","badge-info","2026-01-25","信用版_QA","Gao Firball741","鐵律 #2 時間承諾","「更新至6點數據 約5分鐘」","有「約」字緩衝但仍為時間承諾。"),
+        ("7","邊界案例","無","badge-info","2026-04-01","信用版_QA","Gao Firball741","鐵律 #2 禁用詞「一定」","「開放時間不一定，要等廠商回覆」","「不一定」表達不確定性，語意正確。"),
+        ("8","邊界案例","低","badge-info","2026-04-01","K88_金五吉","Gao Firball741","鐵律 #2 禁用詞「一定」","「一定要點擊參加才會開始計算」","操作指引中的必要條件描述。"),
+        ("9","誤觸發","低","badge-success","2026-01-12","信用版_FT","Gao Firball741","鐵律 #2 時間承諾","「預計影響30分鐘」","標準維護通知格式。"),
+        ("10","誤觸發","低","badge-success","2026-03-05","L06_吉滿滿_主管群","Firball02","鐵律 #2 時間承諾","「預計半小時左右可更新完成」","主管群 P0 級別，時間承諾風險更高。"),
+        ("11","誤觸發","低","badge-success","2026-02-11","L06_吉滿滿","Gao Firball741","鐵律 #2 時間承諾","「更新需要10分鐘」","系統更新場景。"),
+        ("12","誤觸發","可接受","badge-success","2026-02-04","L04_大頭仔 / JIN_錢老爺","Gao Firball741","鐵律 #2 時間承諾","「目前排程最快就是1分鐘」","系統排程機制事實描述。"),
+    ]
+    for c in cases:
+        cases_html += f'<tr><td>{c[0]}</td><td><span class="badge {c[3]}">{c[1]}</span></td><td>{c[4]}</td><td>{c[5]}</td><td><strong>{c[6]}</strong></td><td>{c[7]}</td><td style="color:#ff8888">{c[8]}</td><td>{c[9]}</td></tr>'
+
     return f"""
 <section id="violations" class="section">
-<div class="section-title"><span class="num">{num}</span> ⚠️ 鐵律違反統計（匿名化）</div>
-<p style="color:var(--text-dim);margin-bottom:16px">基於 2026 Q1 客服紀錄自動掃描，以下為違規類型統計摘要。不點名個人。</p>
-<div class="stats-grid">
-<div class="stat-card"><div class="label">總違規件數</div><div class="number" style="color:var(--danger)">12</div><div class="detail">佔全部訊息 &lt; 0.04%</div></div>
-<div class="stat-card"><div class="label">禁用詞「一定」</div><div class="number" style="color:var(--warning)">6</div><div class="detail">絕對用語違規</div></div>
-<div class="stat-card"><div class="label">時間承諾</div><div class="number" style="color:var(--warning)">6</div><div class="detail">不可控時間承諾</div></div>
-<div class="stat-card"><div class="label">涉及站點</div><div class="number" style="color:var(--info)">8</div><div class="detail">分布廣泛</div></div>
+<div class="section-title"><span class="num">{num}</span> ⚠️ 鐵律違反案例記錄</div>
+<div style="background:rgba(255,68,68,.08);border:1px solid rgba(255,68,68,.3);border-radius:8px;padding:14px 18px;margin-bottom:20px">
+<p style="color:var(--danger);font-weight:600">⚠️ 內部訓練用，禁止外傳。掃描期間：2026-01-01 至 2026-04-13</p>
+<p style="color:var(--text-dim);font-size:.9em;margin-top:4px">35 命中 / 12 筆記錄 → 真實違反 3 件 · 邊界案例 5 件 · 誤觸發 4 件（&lt; 0.01% 訊息量）</p>
 </div>
+<div class="stats-grid">
+<div class="stat-card"><div class="label">掃描命中</div><div class="number" style="color:var(--warning)">35</div><div class="detail">自動掃描</div></div>
+<div class="stat-card"><div class="label">保留記錄</div><div class="number" style="color:var(--danger)">12</div><div class="detail">人工覆審</div></div>
+<div class="stat-card"><div class="label">真實違反</div><div class="number" style="color:var(--danger)">3</div><div class="detail">需個別複盤</div></div>
+<div class="stat-card"><div class="label">整體合規率</div><div class="number" style="color:var(--success)">&gt;99.99%</div><div class="detail">守規良好</div></div>
+</div>
+<div class="card" style="margin-bottom:24px;overflow-x:auto"><h3>12 筆完整案例</h3>
+<table><thead><tr><th>#</th><th>分類</th><th>日期</th><th>站點</th><th>人員</th><th>違反類型</th><th>原文引用</th><th>情境/影響</th></tr></thead>
+<tbody>{cases_html}</tbody></table></div>
 <div class="chart-grid">
-<div class="card"><h3>違規類型分布</h3><table><thead><tr><th>違規類型</th><th>件數</th><th>佔比</th><th>說明</th></tr></thead><tbody>
-<tr><td><span class="badge badge-danger">禁用詞「一定」</span></td><td>6</td><td>50%</td><td>使用「一定」「絕對」等斷言詞彙，違反鐵律第三條</td></tr>
-<tr><td><span class="badge badge-warning">時間承諾</span></td><td>6</td><td>50%</td><td>承諾具體維護/處理時間，違反鐵律第二條</td></tr>
+<div class="card"><h3>人員違反彙總</h3><table><thead><tr><th>FAE 人員</th><th>次數</th><th>嚴重程度</th><th>建議</th></tr></thead><tbody>
+<tr><td><strong>Gao Firball741</strong></td><td>8 次（1 真實 + 7 邊界/誤觸發）</td><td><span class="badge badge-danger">高</span></td><td>個別複盤 + Vendor 禁語訓練 + 時間承諾替代話術</td></tr>
+<tr><td><strong>Firball02</strong></td><td>3 次（1 真實 + 2 邊界）</td><td><span class="badge badge-warning">中</span></td><td>時間承諾替代話術培訓</td></tr>
+<tr><td><strong>Dan</strong></td><td>2 次（1 真實 + 1 邊界）</td><td><span class="badge badge-info">低</span></td><td>指令性用詞替換練習</td></tr>
 </tbody></table></div>
 <div class="card"><h3>改善建議</h3><ul style="margin-left:20px;color:#ccc;line-height:1.8">
-<li>定期進行鐵律宣導培訓（建議每月 1 次）</li>
-<li>在 Slack 設置禁用詞自動提醒 Bot</li>
-<li>時間承諾改為進度承諾：「有進度第一時間同步」</li>
-<li>絕對用語改為條件語氣：「依目前資訊來看…」</li>
-<li>新人入職必讀鐵律，簽署遵守承諾</li>
+<li><strong>短期</strong>：Gao Firball741 個別複盤（重點「不可能朔源」案例）</li>
+<li><strong>短期</strong>：新增「不可能」至禁用詞表</li>
+<li><strong>短期</strong>：維護公告模板標準化，移除所有時間數字</li>
+<li><strong>中期</strong>：對外發送前自動掃描禁用詞，觸發時提醒修改</li>
+<li><strong>中期</strong>：季度複盤會議 + 替代話術卡片</li>
 </ul></div></div>
+<div class="card" style="margin-top:16px"><h3>禁用詞完整清單</h3><table><thead><tr><th>禁用詞</th><th>替代話術</th></tr></thead><tbody>
+<tr><td style="color:#ff8888">一定</td><td>需要 / 建議</td></tr>
+<tr><td style="color:#ff8888">絕對</td><td>目前確認</td></tr>
+<tr><td style="color:#ff8888">保證</td><td>我們會持續追蹤</td></tr>
+<tr><td style="color:#ff8888">不可能</td><td>這部分我們再確認</td></tr>
+<tr><td style="color:#ff8888">馬上好</td><td>正在處理中</td></tr>
+<tr><td style="color:#ff8888">X 分鐘內</td><td>完成後第一時間同步</td></tr>
+<tr><td style="color:#ff8888">應該很快</td><td>持續追蹤中</td></tr>
+</tbody></table></div>
 </section><hr class="section-divider">"""
 
 
@@ -369,16 +404,66 @@ def rules_section():
 
 
 def rpa_section(num):
-    """RPA Top 3 — public version."""
+    """RPA Top 3 — real content from 5_RPA_Top3_自動化場景.md."""
     return f"""
 <section id="rpa" class="section">
 <div class="section-title"><span class="num">{num}</span> 🤖 RPA 自動化 Top 3 建議</div>
-<p style="color:var(--text-dim);margin-bottom:16px">基於客訴分析數據，以下三項最具自動化價值。</p>
-<div class="chart-grid" style="grid-template-columns:repeat(auto-fit,minmax(350px,1fr))">
-<div class="rpa-card"><h4>1. ICON 素材批次處理</h4><p style="color:#ccc;font-size:.93em;line-height:1.7">遊戲上架/串接類客訴 797 件中，大量涉及 ICON 素材。自動化 ICON 抓取、格式轉換、品質檢查可減少 60%+ 上架時間。<br><span class="badge badge-success">預估節省：每月 40+ 人時</span></p></div>
-<div class="rpa-card"><h4>2. 重複客訴自動辨識與回覆</h4><p style="color:#ccc;font-size:.93em;line-height:1.7">帳號問題 1,479 件中約 30% 為重複詢問（忘密碼、被鎖定）。建立自動辨識 + 範本回覆可縮短首次回應時間。<br><span class="badge badge-success">預估節省：每月 25+ 人時</span></p></div>
-<div class="rpa-card"><h4>3. 帳務對帳自動比對</h4><p style="color:#ccc;font-size:.93em;line-height:1.7">帳務對帳 301 件中多數為三方比對（GA/MG/遊戲商）。自動化對帳腳本可將每次對帳從 2 小時壓縮至 15 分鐘。<br><span class="badge badge-success">預估節省：每月 30+ 人時</span></p></div>
-</div></section><hr class="section-divider">"""
+<p style="color:var(--text-dim);margin-bottom:16px">篩選條件：單月 ≥ 50 次 + 流程固定 + 輸入格式標準 + 輸出可驗證 + 失敗可回補。</p>
+
+<div class="rpa-card" style="margin-bottom:20px">
+<h4>🥇 Top 1 — N8 印度站 IP 白名單自動處理</h4>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:12px 0">
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">白名單訊息</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">473 則</div><div style="font-size:.75em;color:var(--text-dim)">佔 N8 群 5.1%</div></div>
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">月均頻次</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">150+</div><div style="font-size:.75em;color:var(--text-dim)">次/月</div></div>
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">格式標準度</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">★★★★★</div></div>
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">月省人力</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">7.5~12.5h</div></div>
+</div>
+<p style="color:#ccc;font-size:.92em;line-height:1.7;margin-bottom:8px"><strong>訊息模式</strong>：<code style="background:rgba(0,0,0,.3);padding:2px 6px;border-radius:3px">IP不在白名单 180.190.171.159 please add po</code> — 標準 IPv4 + 固定觸發詞，來源為可信任窗口（CS-Ariela、CS-Xin、Rin Li）。</p>
+<p style="color:#ccc;font-size:.92em;line-height:1.7;margin-bottom:8px"><strong>RPA 流程</strong>：監聽群 → NLP 提取 IP → IPv4 正則驗證 → 來源驗證 → 登記白名單表 → 送技術端 API → 回覆 "✅ Added" → 結案歸檔</p>
+<p style="color:#ccc;font-size:.92em;line-height:1.7"><strong>風險</strong>：白名單涉資安，建議先做「半自動」（RPA 建議 + FAE 一鍵核准），需 Crimson 同意。<br><span class="badge badge-success">開發成本：中｜風險：低｜ROI：高｜UAT 期：2~4 週</span></p>
+</div>
+
+<div class="rpa-card" style="margin-bottom:20px">
+<h4>🥈 Top 2 — LINE 站「後台操作」FAQ 自動導流</h4>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:12px 0">
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">後台設定問題</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">796 次</div><div style="font-size:.75em;color:var(--text-dim)">問題矩陣最高頻</div></div>
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">月均頻次</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">265</div><div style="font-size:.75em;color:var(--text-dim)">次/月</div></div>
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">80/20 規則</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">20 題</div><div style="font-size:.75em;color:var(--text-dim)">覆蓋 80% 問題</div></div>
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">月省人力</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">22~66h</div></div>
+</div>
+<p style="color:#ccc;font-size:.92em;line-height:1.7;margin-bottom:8px"><strong>訊息模式</strong>：「這個要怎麼設」「XX 功能點不了」「代理怎麼加」— 多樣但 80% 可歸類到 20 個高頻問題。</p>
+<p style="color:#ccc;font-size:.92em;line-height:1.7;margin-bottom:8px"><strong>RPA 流程</strong>（半自動）：監聽站長訊息 → NLP 分類 → 匹配 FAQ 庫（信心度 ≥ 70%）→ 推送答案/操作影片 → FAE 確認補充。低信心度或站長回「看不懂」→ 人工接手。</p>
+<p style="color:#ccc;font-size:.92em;line-height:1.7"><strong>風險</strong>：誤答可能擾亂站長，需高信心度門檻 + 「跳過 AI 直接找 FAE」選項。建議先上 1~2 站試點（JIN、A95）。<br><span class="badge badge-success">開發成本：中高｜風險：中｜ROI：高｜建置期：4~8 週</span></p>
+</div>
+
+<div class="rpa-card" style="margin-bottom:20px">
+<h4>🥉 Top 3 — 週帳三邊對帳差異檢測 + 預警</h4>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:12px 0">
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">三邊比對</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">遊戲商/MG/GA</div></div>
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">Deadline</div><div style="font-size:1.6em;font-weight:700;color:var(--danger)">週一 0 點</div></div>
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">可驗證度</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">★★★★★</div><div style="font-size:.75em;color:var(--text-dim)">數字直接比對</div></div>
+<div style="text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:6px"><div style="color:var(--text-dim);font-size:.8em">月省人力</div><div style="font-size:1.6em;font-weight:700;color:var(--success)">~10h</div><div style="font-size:.75em;color:var(--text-dim)">+ deadline 保險</div></div>
+</div>
+<p style="color:#ccc;font-size:.92em;line-height:1.7;margin-bottom:8px"><strong>場景</strong>：每週日晚 FAE 需拉三邊數據人工比對，差異多為漏單或延遲寫入，極耗時且週一 0 點前必須完成。</p>
+<p style="color:#ccc;font-size:.92em;line-height:1.7;margin-bottom:8px"><strong>RPA 流程</strong>：週日 18:00 自動觸發 → 拉三邊數據 → 比對引擎產出差異列表 → 分類（漏單/延遲/雙寫不一致）→ 自動補跑等 30 分鐘重新比對 → 差異 &lt; 閾值通知 FAE / 差異 &gt; 閾值告警當班幹部 → 週一 00:00 自動產週報</p>
+<p style="color:#ccc;font-size:.92em;line-height:1.7"><strong>風險</strong>：需接三個系統 API（需協調 Jay/Peter），自動化出錯一次可能動搖信用業主信心。建議先做「輔助版」。<br><span class="badge badge-warning">開發成本：高｜風險：中｜ROI：極高（風險面）｜建置期：6~10 週</span></p>
+</div>
+
+<div class="card" style="margin-bottom:20px"><h3>成本/效益摘要</h3>
+<table><thead><tr><th>RPA</th><th>開發</th><th>月節省人力</th><th>ROI</th><th>風險</th></tr></thead><tbody>
+<tr><td><strong style="color:var(--success)">Top 1 N8 白名單</strong></td><td>中</td><td>7.5~12.5 小時</td><td><span class="badge badge-success">高</span></td><td><span class="badge badge-success">低</span></td></tr>
+<tr><td><strong style="color:var(--success)">Top 2 後台 FAQ</strong></td><td>中高</td><td>22~66 小時</td><td><span class="badge badge-success">高</span></td><td><span class="badge badge-warning">中</span></td></tr>
+<tr><td><strong style="color:var(--success)">Top 3 對帳輔助</strong></td><td>高</td><td>10 小時 + deadline 保險</td><td><span class="badge badge-primary">極高</span></td><td><span class="badge badge-warning">中</span></td></tr>
+</tbody></table></div>
+
+<div class="card"><h3>推動路線圖</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:12px">
+<div style="padding:14px;background:rgba(0,217,159,.08);border:1px solid rgba(0,217,159,.3);border-radius:8px"><strong style="color:var(--success)">階段 1（Month 1~2）</strong><p style="color:#ccc;font-size:.9em;margin-top:4px">先做 N8 IP 白名單半自動版。每日回顧調整閾值。</p></div>
+<div style="padding:14px;background:rgba(0,180,216,.08);border:1px solid rgba(0,180,216,.3);border-radius:8px"><strong style="color:var(--info)">階段 2（Month 3~5）</strong><p style="color:#ccc;font-size:.9em;margin-top:4px">建 FAQ 分類器，上 1~2 個 LINE 站試點，量化「FAE 時間節省」。</p></div>
+<div style="padding:14px;background:rgba(255,179,0,.08);border:1px solid rgba(255,179,0,.3);border-radius:8px"><strong style="color:var(--warning)">階段 3（Month 6~8）</strong><p style="color:#ccc;font-size:.9em;margin-top:4px">先做差異檢測 + 人工決策，通過 UAT 後再開自動產報表。</p></div>
+<div style="padding:14px;background:rgba(157,78,221,.08);border:1px solid rgba(157,78,221,.3);border-radius:8px"><strong style="color:#9D4EDD">階段 4（Month 9+）</strong><p style="color:#ccc;font-size:.9em;margin-top:4px">NLP 升級、跨 KB 串聯、即時話術檢查（配合鐵律掃描）。</p></div>
+</div></div>
+</section><hr class="section-divider">"""
 
 
 def internal_sop_section(num):
